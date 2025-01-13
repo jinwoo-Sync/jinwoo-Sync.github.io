@@ -15,13 +15,12 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
-    - name: Push changes
+    - name: Configure Git
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        git push https://${{ secrets.GH_PAT }}@github.com/jinwoo-Sync/jinwoo-Sync.github.io.git HEAD:main
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -29,8 +28,15 @@ jobs:
         python-version: '3.x'
 
     - name: Install dependencies
-      run: |
-        pip install feedparser gitpython
+      run: pip install feedparser gitpython
 
     - name: Run script
       run: python scripts/update_blog.py
+
+    - name: Commit and Push changes
+      env:
+        GH_PAT: ${{ secrets.GH_PAT }}
+      run: |
+        git add .
+        git commit -m "Auto-update blog posts [skip ci]" || echo "No changes to commit"
+        git push https://github-actions:${{ secrets.GH_PAT }}@github.com/jinwoo-Sync/jinwoo-Sync.github.io.git HEAD:main
