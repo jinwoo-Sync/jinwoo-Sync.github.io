@@ -6,7 +6,6 @@ on:
       branches:
         - main  # 또는 워크플로우를 트리거하고 싶은 브랜치 이름
   schedule:
-    # 테스트를 원한다면, `한국 표준시 = UTC + 9` 참고해서 시간 수정한 후 테스트해보기
     - cron: '0 0 * * *'  # 매일 자정에 실행, UTC 협정 세계시 기준 (한국 시간 기준 오전 9시)
     - cron: '0 15 * * *' # 매일 자정에 실행, 한국 시간 기준 (UTC 15:00)
 
@@ -22,7 +21,7 @@ jobs:
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        git push https://${{ secrets.GH_PAT }}@github.com/jinwoo-Sync/jinwoo-Sync.github.io.git
+        git push https://${{ secrets.GH_PAT }}@github.com/jinwoo-Sync/jinwoo-Sync.github.io.git HEAD:main
 
     - name: Set up Python
       uses: actions/setup-python@v2
