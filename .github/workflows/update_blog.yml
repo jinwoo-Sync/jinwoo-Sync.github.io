@@ -33,10 +33,9 @@ jobs:
     - name: Run script
       run: python scripts/update_blog.py
 
-    - name: Commit and Push changes
+    - name: Push changes
       env:
-        GH_PAT: ${{ secrets.GH_PAT }}
+        ACTIONS_DEPLOY_KEY: ${{ secrets.velog }}
       run: |
-        git add .
-        git commit -m "Auto-update blog posts [skip ci]" || echo "No changes to commit"
-        git push https://github-actions:${{ secrets.GH_PAT }}@github.com/jinwoo-Sync/jinwoo-Sync.github.io.git HEAD:main
+        git remote add origin https://<your-username>:${{ secrets.velog }}@github.com/jinwoo-Sync/jinwoo-Sync.github.io.git
+        git push origin main
