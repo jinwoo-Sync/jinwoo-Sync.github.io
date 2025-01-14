@@ -37,5 +37,6 @@ jobs:
       env:
         ACTIONS_DEPLOY_KEY: ${{ secrets.velog }}
       run: |
+        git remote remove origin || true
         git remote add origin https://x-access-token:${{ secrets.velog }}@github.com/jinwoo-Sync/jinwoo-Sync.github.io.git
         git push origin main
