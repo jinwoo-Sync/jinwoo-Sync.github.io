@@ -1,7 +1,9 @@
 # jinwoo-Sync.github.io
 
-This repository contains my personal homepage that is served via **GitHub Pages**.
+This repository contains my personal homepage served via **GitHub Pages** and built with **Jekyll**.
 
 Navigate through the site to see the languages I use, my CV, research papers and reviews, as well as my GitHub contribution graph.
 
-The layout was styled using [Bootstrap](https://getbootstrap.com/) and ideas from the [congchu/web-porfolio](https://github.com/congchu/web-porfolio) template.
+The site uses [Bootstrap](https://getbootstrap.com/) for styling and the [AOS](https://github.com/michalsnik/aos) library for scroll animations.
+
+Markdown-based paper reviews are linked under the **Papers** section.
