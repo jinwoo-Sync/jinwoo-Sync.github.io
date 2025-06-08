@@ -1,0 +1,15 @@
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+}
+
+.hero {
+    background: linear-gradient(120deg, #2980b9, #6dd5fa);
+    color: white;
+    padding: 3rem 0;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.navbar-brand {
+    font-weight: 600;
+}
