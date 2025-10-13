@@ -8,6 +8,7 @@
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link{% if page.url == '/' %} active{% endif %}" href="{{ '/' | relative_url }}">Home</a></li>
         <li class="nav-item"><a class="nav-link{% if page.url == '/languages.html' %} active{% endif %}" href="{{ '/languages.html' | relative_url }}">Languages</a></li>
+        <li class="nav-item"><a class="nav-link{% if page.url == '/projects.html' or page.layout == 'project' %} active{% endif %}" href="{{ '/projects.html' | relative_url }}">Projects</a></li>
         <li class="nav-item"><a class="nav-link{% if page.url == '/posts.html' %} active{% endif %}" href="{{ '/posts.html' | relative_url }}">Posts</a></li>
         <li class="nav-item"><a class="nav-link{% if page.url == '/cv.html' %} active{% endif %}" href="{{ '/cv.html' | relative_url }}">CV</a></li>
         <li class="nav-item"><a class="nav-link{% if page.url == '/papers.html' %} active{% endif %}" href="{{ '/papers.html' | relative_url }}">Papers</a></li>

@@ -1,0 +1,106 @@
+---
+layout: default
+---
+<div class="container py-5" data-aos="fade-up">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ '/' | relative_url }}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{{ '/projects.html' | relative_url }}">Projects</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ page.title }}</li>
+    </ol>
+  </nav>
+
+  <article>
+    <header class="mb-4">
+      <h1 class="display-5 mb-3">{{ page.title }}</h1>
+      <div class="text-muted mb-3">
+        <span class="badge bg-primary">{{ page.category }}</span>
+        <span class="mx-2">|</span>
+        <span><i class="bi bi-calendar"></i> {{ page.period }}</span>
+        {% if page.role %}
+        <span class="mx-2">|</span>
+        <span><i class="bi bi-person"></i> {{ page.role }}</span>
+        {% endif %}
+      </div>
+      {% if page.tech %}
+      <div class="mb-3">
+        <strong>기술 스택:</strong>
+        <span class="text-muted">{{ page.tech }}</span>
+      </div>
+      {% endif %}
+    </header>
+
+    {% if page.thumbnail %}
+    <div class="mb-4">
+      <img src="{{ page.thumbnail | relative_url }}" class="img-fluid rounded" alt="{{ page.title }}">
+    </div>
+    {% endif %}
+
+    <div class="project-content">
+      {{ content }}
+    </div>
+
+    <footer class="mt-5 pt-4 border-top">
+      <div class="d-flex justify-content-between">
+        <a href="{{ '/projects.html' | relative_url }}" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left"></i> Back to Projects
+        </a>
+        {% if page.github %}
+        <a href="{{ page.github }}" class="btn btn-outline-primary" target="_blank">
+          <i class="bi bi-github"></i> View on GitHub
+        </a>
+        {% endif %}
+      </div>
+    </footer>
+  </article>
+</div>
+
+<style>
+.project-content {
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.project-content h2 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.project-content h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.project-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 1.5rem 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.project-content pre {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.project-content code {
+  background-color: #f8f9fa;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.project-content ul, .project-content ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.project-content li {
+  margin: 0.5rem 0;
+}
+</style>

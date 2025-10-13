@@ -3,3 +3,15 @@ author: Jinwoo
 markdown: kramdown
 plugins:
   - jekyll-seo-tag
+
+collections:
+  projects:
+    output: true
+    permalink: /projects/:path/
+
+defaults:
+  - scope:
+      path: ""
+      type: "projects"
+    values:
+      layout: "project"

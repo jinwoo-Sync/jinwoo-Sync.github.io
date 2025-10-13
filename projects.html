@@ -1,0 +1,84 @@
+---
+layout: default
+title: Projects
+---
+<div class="container py-5" data-aos="fade-up">
+  <header class="mb-5">
+    <h1 class="display-4 mb-3">Projects</h1>
+    <p class="lead text-muted">
+      센서 융합, 캘리브레이션, MMS, POI 검출 등 회사에서 진행한 주요 프로젝트들입니다.
+    </p>
+  </header>
+
+  {% assign categories = "Calibration,MMS,Real-time POI Detection,Replica Program,Data Synchronization" | split: "," %}
+
+  {% for category in categories %}
+    {% assign projects = site.projects | where: "category", category | sort: "date" | reverse %}
+    {% if projects.size > 0 %}
+    <section class="mb-5" data-aos="fade-up">
+      <h2 class="h3 mb-4 pb-2 border-bottom">
+        <i class="bi bi-folder"></i> {{ category }}
+      </h2>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for project in projects %}
+        <div class="col" data-aos="zoom-in" data-aos-delay="{{ forloop.index | times: 100 }}">
+          <div class="card h-100 shadow-sm hover-card">
+            {% if project.thumbnail %}
+            <img src="{{ project.thumbnail | relative_url }}" class="card-img-top" alt="{{ project.title }}" style="height: 200px; object-fit: cover;">
+            {% else %}
+            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+              <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+            </div>
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">
+                <a href="{{ project.url | relative_url }}" class="text-decoration-none stretched-link">
+                  {{ project.title }}
+                </a>
+              </h5>
+              <p class="text-muted small mb-2">
+                <i class="bi bi-calendar"></i> {{ project.period }}
+                {% if project.role %}
+                <br><i class="bi bi-person"></i> {{ project.role }}
+                {% endif %}
+              </p>
+              <p class="card-text">{{ project.excerpt | strip_html | truncate: 120 }}</p>
+            </div>
+            {% if project.tech %}
+            <div class="card-footer bg-transparent border-top-0">
+              <small class="text-muted">
+                <i class="bi bi-tools"></i> {{ project.tech | truncate: 50 }}
+              </small>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+  {% endfor %}
+</div>
+
+<style>
+.hover-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+}
+
+.card-body a {
+  color: inherit;
+}
+
+.card-body a:hover {
+  color: #0d6efd;
+}
+
+.bi {
+  margin-right: 0.25rem;
+}
+</style>
