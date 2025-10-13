@@ -9,3 +9,4 @@ The site uses [Bootstrap](https://getbootstrap.com/) for styling and the [AOS](h
 Markdown-based paper reviews are linked under the **Papers** section.
 The Languages page shows icons for each language, environment and tool. Posts are displayed in a card layout with thumbnails on the home page and the Posts page.
 
+수정중
