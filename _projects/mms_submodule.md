@@ -23,6 +23,8 @@ order: 3
 
 ![](/assets/images/projects/mms/mms.gif)
 
+![](/assets/images/projects/mms/gnss_mss이미지.png)
+
 ### GNSS 한계점
 
 ![](/assets/images/projects/mms/gnss한계점.png)
