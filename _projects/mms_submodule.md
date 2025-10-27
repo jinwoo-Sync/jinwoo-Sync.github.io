@@ -20,3 +20,5 @@ order: 3
 ## 프로젝트 결과물
 
 ![](/assets/images/projects/mms/module_architecture.png)
+
+![](/assets/images/projects/mms/mms.gif)
