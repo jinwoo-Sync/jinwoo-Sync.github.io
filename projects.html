@@ -10,7 +10,7 @@ title: Projects
     </p>
   </header>
 
-  {% assign categories = "Calibration,Mobile Mapping System,Mobile Application & AI,Time Synchronization" | split: "," %}
+  {% assign categories = "Calibration,Mobile Mapping System,Mobile Application & AI,Time Synchronization,Academic & Competition" | split: "," %}
 
   {% for category in categories %}
     {% assign projects = site.projects | where: "category", category | sort: "date" | reverse %}
