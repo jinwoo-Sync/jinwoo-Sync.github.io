@@ -45,9 +45,9 @@ order: 2
 
 ![](/assets/images/projects/hyundai_calib/view_tuning.png)
 
-[ 구조도 ]
+<!-- [ 구조도 ] -->
 
-![](/assets/images/projects/hyundai_calib/program_strcut.png)
+<!-- ![](/assets/images/projects/hyundai_calib/program_strcut.png) -->
 
 [ 탑뷰 이미지 ]
 
