@@ -12,7 +12,7 @@ order: 1
 
 ## 프로젝트 개요
 
-인도네시아 도시 단위의 대규모 항공 측량 데이터(항공 카메라, 항공 LiDAR)를 처리하여, 현지 사용자가 직접 운용할 수 있는 **상용 GIS 프로그램**을 개발하는 프로젝트다. 단순한 연구 단계의 코드가 아닌, 실제 고객에게 배포되어 상업적으로 운용되는 소프트웨어를 만들어내는 것이 목표다.
+인도네시아 도시 단위의 대규모 항공 측량 데이터(항공 카메라, 항공 LiDAR)를 처리하여, 현지 사용자가 직접 운용할 수 있는 **상용 GIS 프로그램**을 개발하는 프로젝트다. 단순히 기술적 구현을 넘어 대규모 데이터의 자동화 처리와 고정밀 지형 모델 생성을 목표로 한다.
 
 ## 나의 역할
 
@@ -33,34 +33,68 @@ SHP 생성 과정에서 겹치는 영역을 자동 감지하고 정리하는 기
 *GIS 툴에서 중복 영역이 빨간색으로 표시된 모습*
 
 ### 2. LAS 핸들링 및 DTM 최적화
-포인트클라우드 추출 → Polygon 기반 분할 + Multi-layer 분할 → **알고리즘 기반 지면 점군 추출 및 DTM 생성** → `.las` / `.tif` 출력
-
-이 파이프라인의 핵심은 단순히 높이값 기반의 DSM(Digital Surface Model)을 만드는 것이 아니라, 복잡한 지형지물을 제거하고 **순수 지면 높이를 나타내는 고정밀 DTM(Digital Terrain Model)**을 생성하는 데 있다. 이는 추후 **지붕과 바닥 높이 차를 이용한 .obj 자동 모델링 생성**에 반드시 필요한 필수 공정이다.
+단순한 높이값 기반의 DSM(Digital Surface Model)을 넘어, 복잡한 지형지물을 제거하고 **순수 지면 높이를 나타내는 고정밀 DTM(Digital Terrain Model)**을 생성한다. 이는 추후 **지붕과 바닥 높이 차를 이용한 .obj 자동 모델링 생성**의 핵심 토대가 된다.
 
 ---
 
-## DTM(Digital Terrain Model) 생성 알고리즘 상세
+## DTM(Digital Terrain Model) 생성 파이프라인
 
-기존 PDAL CSF 방식 대비 연산 속도와 정밀도를 획기적으로 개선한 커스텀 DTM 생성 파이프라인을 4단계로 구현했다.
+기존 PDAL CSF 방식 대비 연산 속도와 정밀도를 획기적으로 개선한 커스텀 DTM 생성 알고리즘이다. 고부하 연산을 효율적으로 처리하기 위해 Voxel/Block 통계 분석과 CPU 병렬 처리를 결합했다.
 
-### Step 1: 지면 점군 추출 (Ground Extraction)
-단순 임계치 방식이 아닌, 두 단계의 필터링을 통해 건물 및 인공 구조물을 정교하게 제거한다.
-- **Voxel 기반 분석 (ExtractGroundPointsVoxelBased)**: 전체 영역을 5m x 5m Voxel로 분할한다. 각 Voxel 내 점들의 높이 분포를 분석해 최저점 클러스터를 식별하고, 지면에서 약 2~3m 이상 떨어진 점들을 1차 제거한다.
-- **Block 단위 평면 분석 (FilterElevatedFlatSurfaces_BlockLevel)**: 25m 단위 Block으로 확장하여 통계(Median Z, Normal Z, StdZ)를 산출한다. 주변 Block과의 **경계 높이 차이(Edge Height)**가 크고 표면이 평탄한(Normal Z) 경우, 이를 건물 옥상으로 판단하여 최종 제거한다.
+![DTM 생성 파이프라인]({{ '/assets/images/projects/indonesia_gis/dtm_pipeline_flowchart.png' | relative_url }})
+*DTM 생성 전체 파이프라인 — Raw Points에서 최종 DTM.tif까지*
 
-### Step 2: 초기 그리드 생성 (BuildSeedMinZ_Parallel)
-추출된 지면 점군을 격자(Grid) 시스템에 매핑한다.
-- **병렬 처리 최적화**: CPU 코어 수만큼 로컬 그리드를 독립적으로 생성하여 계산한 뒤 병합하는 방식을 채택하여 최적화했다.
-- **MinZ 할당**: 각 셀에는 해당 영역 내의 최저 Z값(MinZ)을 할당하여 지형의 가장 낮은 바닥면을 정의한다.
+```mermaid
+graph TD
+    Raw[Raw Point Cloud] --> Step1[<b>Step 1: 지면 점군 추출</b><br/>Ground Extraction]
+    
+    subgraph Filtering [Ground Filtering Logic]
+    Step1 --> Voxel[Voxel 기반 높이 분포 분석 및 최저점 클러스터링]
+    Voxel --> Block[Block 단위 평면성 분석 및 Edge Height 필터링]
+    Block --> Remove[건물 및 인공 구조물 정교 제거]
+    end
+    
+    Remove --> Step2[<b>Step 2: 초기 그리드 생성</b><br/>Grid Generation]
+    
+    subgraph Grid [Parallel Processing]
+    Step2 --> Parallel[CPU 코어별 로컬 그리드 독립 연산 및 병합]
+    Parallel --> MinZ[MinZ 기반 지면 시드 할당]
+    end
+    
+    MinZ --> Step3[<b>Step 3: Voxel 기반 구멍 메우기</b><br/>Hole Filling]
+    
+    subgraph Interpolation [Optimization]
+    Step3 --> Prop[대형 Voxel 참조 기반 지형 전파 알고리즘]
+    Prop --> Water[수역 보존 및 O-N 복잡도 고속 보간]
+    end
+    
+    Water --> Step4[<b>Step 4: 스무딩 및 데이터 출력</b><br/>Smoothing & Output]
+    
+    subgraph Output [Finalization]
+    Step4 --> Smooth[인접 셀 가중 평균 기반 지형 경계 스무딩]
+    Smooth --> Save[32-bit GeoTiff & .tfw 월드 파일 생성]
+    end
+    
+    Save --> FinalDTM[<b>최종 고정밀 DTM</b>]
+    
+    style Step1 fill:#f9f,stroke:#333,stroke-width:2px
+    style Step2 fill:#bbf,stroke:#333,stroke-width:2px
+    style Step3 fill:#bfb,stroke:#333,stroke-width:2px
+    style Step4 fill:#fbb,stroke:#333,stroke-width:2px
+    style FinalDTM fill:#fff,stroke:#333,stroke-width:4px
+```
 
-### Step 3: Voxel 기반 구멍 메우기 (FillHolesVoxelBased_Parallel)
-건물 제거 부위나 데이터 공백을 채우는 핵심 과정으로, 기존 반경 탐색보다 효율적인 **$O(Width \times Height)$** 복잡도로 동작한다.
-- **지형 전파**: 5~10m 단위의 대형 Voxel 참조 그리드를 통해 주변 지면의 최소 높이 값을 전파받아 빈 공간을 채운다.
-- **수역 보존 (waterDepthOffset)**: 하천이나 논과 같은 수역 영역의 구멍을 메울 때 주변보다 약 0.5m 낮게 설정하여 자연스러운 지형 특징을 유지한다.
+### DTM 알고리즘 시각화 및 결과 비교
 
-### Step 4: 스무딩 및 데이터 출력 (SmoothMean_Parallel)
-- **평균값 스무딩**: 인접한 8개 셀의 가중 평균을 산출하여 지형 경계를 부드럽게 보정한다.
-- **GeoTiff 저장**: 32비트 실수형(Float32) TIFF 포맷으로 저장하며, 좌표 정렬을 위해 `.tfw` (World File)를 동시에 생성하여 GIS 호환성을 확보한다.
+![지면 추출 알고리즘]({{ '/assets/images/projects/indonesia_gis/ground_extraction_algorithm.png' | relative_url }})
+*Voxel 기반 높이 분석 및 Block 단위 평면 필터링 과정*
+
+| PDAL CSF 방식 | C# 커스텀 알고리즘 |
+|:---:|:---:|
+| ![PDAL CSF DTM]({{ '/assets/images/projects/indonesia_gis/dtm_pdal_csf.png' | relative_url }}) | ![C# DTM]({{ '/assets/images/projects/indonesia_gis/dtm_csharp.png' | relative_url }}) |
+
+![지면 추출 결과]({{ '/assets/images/projects/indonesia_gis/ground_surface_detail.png' | relative_url }})
+*DTM 생성 전 최종 바닥면 추출 결과*
 
 ---
 
