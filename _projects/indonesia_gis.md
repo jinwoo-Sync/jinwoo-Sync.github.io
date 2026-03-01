@@ -11,8 +11,15 @@ order: 1
 ---
 
 ## 프로젝트 개요
-
 인도네시아 도시 단위의 대규모 항공 측량 데이터(항공 카메라, 항공 LiDAR)를 처리하여, 현지 사용자가 직접 운용할 수 있는 **상용 GIS 프로그램**을 개발하는 프로젝트다. 단순히 기술적 구현을 넘어 대규모 데이터의 자동화 처리와 고정밀 지형 모델 생성을 목표로 한다.
+
+<div style="text-align: center; margin: 20px 0;">
+  <video width="100%" height="auto" autoplay loop muted playsinline style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+    <source src="/assets/videos/projects/indonesia_gis/gis_tool_demo.webm" type="video/webm">
+    Your browser does not support the video tag.
+  </video>
+  <p style="color: #666; font-size: 0.9em; margin-top: 8px;"><i>도시급 항공 데이터 처리 상용 GIS 툴 구동 시연</i></p>
+</div>
 
 ## 나의 역할
 
