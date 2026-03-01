@@ -3,41 +3,43 @@ layout: project
 title: "Real-time POI Detection Program - Mobile Version"
 period: "2025.03 ~ Present"
 category: "Mobile Application & AI"
-tech: "Kotlin, YOLOv8 (TFLite), Kafka, Android Camera2, GNSS Raw, Coroutines"
+tech: "Kotlin, Coroutines, YOLOv8(TFLite), Camera2 API, GNSS Raw, FFmpeg"
 role: "Project Manager & Lead Developer"
 company: "Mobiltech (Internal R&D)"
 order: 4
 ---
 
 ## 프로젝트 개요
-산업용 카메라, LiDAR, Jetson AGX 등 수천만 원 상당의 고가 장비를 **스마트폰 하나로 대체**하여 운영 비용과 설치 시간을 혁신적으로 절감하는 모바일 기반 POI 탐지 솔루션이다. 단순한 앱 개발을 넘어, 모바일 환경의 하드웨어 제약 내에서 고정밀 데이터 수집과 실시간 AI 추론을 실현했다.
+산업용 카메라, LiDAR, Jetson AGX 등 고가의 하드웨어 구성을 스마트폰 단일 기기로 대체하여 운영 비용을 90% 이상 절감하는 모바일 기반 POI 탐지 및 고정밀 데이터 수집 솔루션이다.
 
-## 핵심 기술 및 구현 상세
+## 활동 내용
 
-### 1. 고성능 이미지 처리 파이프라인 (Zero-copy & Pooling)
-- **Advanced Tagged Bitmap Pool**: 이미지 처리 시 발생하는 빈번한 메모리 할당/해제를 방지하기 위해 60개 규모의 재사용 가능한 비트맵 풀을 직접 구현했다. 이를 통해 GC(Garbage Collection) 부하를 제거하고 15fps의 고해상도 스트리밍을 안정적으로 유지했다.
-- **High-Speed Zero-copy Processor**: Android의 YUV_420_888 포맷을 RGB로 변환할 때, 메모리 복사를 최소화하는 자체 알고리즘을 적용하여 CPU 점유율을 30% 이상 절감했다.
+### [시스템 안정화 및 성능 최적화 (Technical Highlight)]
+- **통합 데이터 파이프라인**: 센서 데이터 수집 → 실시간 AI 추론 → UI 렌더링 → 실시간 전송 및 **.mp4 영상 저장**으로 이어지는 고부하 파이프라인 구축
+- **메모리 관리 및 GC 부하 해결**: 초기 개발 단계에서 빈번한 비트맵 생성/소멸로 인한 GC(Garbage Collection) 오버헤드로 앱이 30분 이내에 강제 종료되던 치명적인 결함 해결
+- **가동 시간 혁신 (30분 → 3시간+)**: `AdvancedTaggedBitmapPool`(60 Slots) 및 제로카피(Zero-copy) 기반의 `HighSpeedZeroCopyProcessor`를 직접 설계·구현하여 GC 부하를 원천 차단, 차량 부착 테스트 시 **3시간 이상 연속 가동**되는 안정성을 확보하여 시험 배포 단계 달성
 
-### 2. 하이브리드 시간 동기화 시스템 (Hybrid Time Sync)
-- **Nano-second Precision Sync**: 카메라 프레임, IMU(50Hz), GPS, GNSS Raw 데이터를 나노초 단위의 모노타임(Monotonic Time)으로 동기화하는 `DataSynchronizer`를 설계했다.
-- **GPS Recovery Reprocessing**: GPS 신호가 끊겼다가 복구되는 시점에, 로컬 시간으로 저장된 과거 데이터들을 GPS 시간대(Hybrid Time)로 즉시 재매핑(Reprocessing)하여 데이터의 시간적 무결성을 보장하는 로직을 구현했다.
+### [개발 프로세스 및 아키텍처]
+- **Clean Architecture 적용**: Data, UI, Domain 레이어 분리를 통해 모듈 간 의존성을 낮추고 확장성 확보
+- **비동기 파이프라인**: Kotlin Coroutines Actor 모델 및 Channel/Flow를 활용하여 센서 데이터의 논블로킹(Non-blocking) 병렬 처리 구현
 
-### 3. 적응형 AI 추론 제어 (Adaptive Inference)
-- **Inference Complexity 기반 동적 제어**: 기기의 발열 상태와 추론 시간(Inference Time)을 실시간 모니터링하여, 추론 부하가 높을 경우 프레임 스킵 간격(Skip Interval)을 자동으로 조절(3fps ~ 15fps)함으로써 앱의 크래시를 방지하고 가용성을 높였다.
-- **GPU 가속 최적화**: TFLite GPU Delegate를 활용하고, 추론용 비트맵을 전용 GPU 캔버스에서 처리하여 추론 지연 시간을 최소화했다.
+### [안드로이드 앱 개발 및 최적화]
+- **고성능 이미지 파이프라인**: Camera2 API 연동 및 하드웨어 가속을 통한 15fps 고정 프레임 스트리밍 제어
+- **고속 이미지 처리**: YUV_420_888 to RGB 변환 최적화 및 FFmpeg 기반의 영상 인코딩 로직 구축으로 CPU 점유율 30% 이상 절감
 
-### 4. 고정밀 센서 퓨전 및 스트리밍
-- **GNSS Raw Measurements**: 단순 좌표값이 아닌 GNSS의 클럭(Clock) 및 측정치(Measurements) 이벤트를 직접 핸들링하여 고정밀 위치 추정 기능을 탑재했다.
-- **Kafka 실시간 파이프라인**: 수집된 센서 Batch와 탐지된 POI Bounding Box 데이터를 Kafka API를 통해 원격 서버로 스트리밍하며, 네트워크 불안정 시에도 데이터 유실을 방지하는 내부 큐 시스템을 구축했다.
+### [AI 및 추론 시스템]
+- **적응형 추론 제어**: `DeepLearningAdaptiveManager` 구현을 통해 하드웨어 부하(Latency)에 따라 추론 주기(Skip Interval)를 동적으로 조절하여 시스템 안정성 확보
+- **YOLOv8 TFLite**: YOLOv8 모델 경량화 및 TFLite GPU Delegate 적용으로 모바일 환경 실시간 추론 성능 달성
 
-## 주요 성과
-- **운영 비용 90% 절감**: 고가 산업용 장비를 스마트폰 기반 솔루션으로 대체하여 하드웨어 도입 비용을 획기적으로 낮췄다.
-- **데이터 정밀도 확보**: 모바일 환경임에도 불구하고 나노초 단위의 센서 동기화와 GNSS Raw 데이터 활용을 통해 전문 장비 수준의 데이터 품질을 입증했다.
+### [센서 퓨전 및 데이터 정밀도]
+- **하이브리드 시간 동기화**: `DataSynchronizer`를 통한 GPS/Local 시간 오프셋 보정 및 나노초(ns) 단위 데이터 동기화 구현
+- **고정밀 데이터 수집**: GNSS Raw Measurements(Clock, Satellite Status, Nav Message) 및 IMU(50Hz) 데이터의 저지연 수집 로직 구축
+- **데이터 정합성 유지**: GPS 음영 지역 이탈 시, 신호 단절 구간 동안 로컬 타임으로 수집된 데이터들에 최신 GPS 시간 오프셋을 **소급 적용(Backdating)**하여 전체 데이터셋의 시간축을 정렬하는 로직 구현
 
-## 기술적 특징 요약
-- **Android Native**: Coroutines Actor 모델 기반의 논블로킹(Non-blocking) 센서 처리.
-- **Memory Management**: 자체 구현한 Bitmap Reuse 기술을 통한 고해상도 이미지 처리 최적화.
-- **System Integrity**: GPS 복구 대응 및 하이브리드 타임 스탬프 체계 구축.
+### [데이터 스트리밍 및 서버 연동]
+- **실시간 데이터 전송**: 실시간 데이터 스트리밍을 위한 `SensorDataTransmitter` 모듈 설계 및 데이터 Batch 전송 로직 구현
+- **유실 방지**: 내부 Circular Queue 구조의 버퍼링 시스템을 활용하여 네트워크 불안정 시 데이터 보존성 확보
+- **개발 현황**: **BM(Business Model) 모델 설계 이슈로 인해 서버 연동 및 실시간 전송 기능 개발 잠정 중단**
 
 ## 프로젝트 결과물
 ![](/assets/images/projects/real-time_poi/system_overview.png)
