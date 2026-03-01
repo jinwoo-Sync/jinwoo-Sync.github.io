@@ -99,6 +99,8 @@ graph TD
 |:---:|:---:|
 | ![PDAL CSF DTM]({{ '/assets/images/projects/indonesia_gis/dtm_pdal_csf.png' | relative_url }}) | ![C# DTM]({{ '/assets/images/projects/indonesia_gis/dtm_csharp.png' | relative_url }}) |
 
+> **알고리즘 개발 현황**: C# 커스텀 방식의 경우 속도는 비약적으로 향상되었으나, 현재 특정 지형에서 **데이터 공백(Hole)이 간혹 발생하는 이슈**가 확인되었다. 현재 이를 완벽하게 메우기 위한 보간 로직 고도화 작업을 진행 중이다.
+
 ![지면 추출 결과]({{ '/assets/images/projects/indonesia_gis/ground_surface_detail.png' | relative_url }})
 *DTM 생성 전 최종 바닥면 추출 결과*
 
