@@ -6,7 +6,6 @@ category: "GIS & Data Pipeline"
 tech: "C#, Python, PDAL, GDAL, SAM, EfficientNet, Nuitka"
 role: "Lead Developer"
 company: "Mobiltech (Indonesia Project)"
-thumbnail: "/assets/images/projects/indonesia_gis/shp_overlap_detection.png"
 order: 1
 ---
 
