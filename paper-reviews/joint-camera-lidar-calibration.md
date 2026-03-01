@@ -1,10 +1,10 @@
 ---
 layout: default
-title: "Joint Camera Intrinsic and LiDAR-Camera Extrinsic Calibration"
-paper: "Joint Camera Intrinsic and LiDAR-Camera Extrinsic Calibration"
+title: "Joint Camera-LiDAR Calibration"
+paper: "Joint Camera Intrinsic and LiDAR–Camera Extrinsic Calibration"
 authors: "Yan et al."
-venue: "arXiv:2202.13708"
-tags: [Calibration, LiDAR-Camera, Joint Optimization, Levenberg-Marquardt]
+venue: "arXiv:2202.13708, 2022"
+tags: [Calibration, LiDAR, Camera, Joint Optimization, Ceres]
 ---
 
 <div class="container py-5">
@@ -16,95 +16,86 @@ tags: [Calibration, LiDAR-Camera, Joint Optimization, Levenberg-Marquardt]
     </ol>
   </nav>
 
-  <h1 class="mb-3">Joint Camera Intrinsic & LiDAR-Camera Extrinsic Calibration</h1>
-  <p class="text-muted">Yan et al. — arXiv:2202.13708</p>
+  <h1 class="mb-3">Joint Camera Intrinsic & LiDAR–Camera Extrinsic Calibration</h1>
+  <p class="text-muted">Yan et al. — arXiv:2202.13708, 2022</p>
 
   <hr>
 
-## 핵심 문제
+## 개요
 
-기존 LiDAR-카메라 캘리브레이션은 **2단계(Two-stage)** 방식을 사용합니다:
-1. 카메라 내부파라미터(Intrinsics) 먼저 추정
-2. 그 결과로 LiDAR-카메라 외부파라미터(Extrinsics) 추정
+다중 센서 융합을 위한 정확한 **센서 캘리브레이션**은 자율주행 등의 분야에서 매우 중요하다. 특히 **LiDAR-카메라 캘리브레이션**에서는 일반적으로 카메라의 내부파라미터(intrinsics)를 먼저 추정하고, 그 결과를 바탕으로 외부파라미터(extrinsics)를 추정하는 2단계 방법을 사용한다. 하지만 이 방식은 카메라 내부파라미터의 미세한 오류가 외부파라미터 정합에 악영향을 준다는 문제가 있다.
 
-문제는 1단계의 미세한 오류가 2단계 정확도에 악영향을 준다는 것입니다. 이 논문은 **내부+외부 파라미터를 한 번에 공동 최적화**하는 방법을 제안합니다.
+이 연구는 **카메라 내부 및 LiDAR-카메라 외부 파라미터를 한 번의 최적화로 공동 추정**하는 방법을 제안한다.
 
-## 캘리브레이션 타겟 설계
+---
 
-**하이브리드 보드**: 중앙에 체커보드 패턴 + 주변에 4개의 원형 구멍
+## 1. 수학적 표기법 및 좌표계
 
-- **체커보드**: 카메라에서 코너 점을 정밀하게 검출
-- **원형 홀**: LiDAR 포인트클라우드에서 깊이 불연속(edge)으로 뚜렷하게 검출
+| 기호 | 설명 |
+| :--- | :--- |
+| $\mathcal{C}$ | 카메라 좌표계 |
+| $\mathcal{L}$ | LiDAR 좌표계 |
+| $\mathcal{B}$ | 캘리브레이션 보드 (체커보드) 좌표계 |
+| $\mathbf{K}$ | 카메라 내부파라미터 행렬 |
+| $\mathbf{D}(\cdot)$ | 왜곡 모델 (Radial / Tangential) |
+| $\mathbf{R}_{A\to B}, \mathbf{t}_{A\to B}$ | 프레임 A에서 B로의 회전 및 이동 변환 |
 
-원형 타겟은 사각 패턴보다 회전에 무관하게 연속적인 에지를 제공하므로 검출 안정성이 높습니다.
+최종적으로 구하고자 하는 파라미터 벡터 $\Theta$는 다음과 같이 정의된다:
 
-## 파이프라인
+$$\Theta = [\underbrace{f_x, f_y, c_x, c_y, k_1, k_2, \dots}_{\Theta_{\text{int}}}, \underbrace{\boldsymbol\omega_{L\to C}, \mathbf{t}_{L\to C}}_{\Theta_{\text{ext}}}]^{\top}$$
 
-### 1. 센서별 타겟 검출
+---
 
-**카메라**: OpenCV `findChessboardCorners`로 코너 픽셀 좌표 추출
+## 2. 관측 모델 (Projection)
 
-**LiDAR**:
-1. ROI 필터링으로 배경 제거
-2. RANSAC 평면 피팅으로 보드 평면 탐지
-3. 원형 홀 배치 패턴을 마스크로 생성
-4. 평면 내 회전(1DOF) + 이동(2DOF)만 Grid Search하여 홀 중심 좌표 추출
+3D 공간의 점 $\mathbf{P}^F$를 이미지 평면상의 2D 좌표 $\mathbf{p}$로 투영하는 식은 다음과 같다:
 
-### 2. 초기 파라미터 추정 (Zhang 방법)
+$$\mathbf{p} = \begin{bmatrix}u \\ v \\ 1\end{bmatrix} = \mathbf{K} \cdot \mathbf{d}\left(\underbrace{\mathbf{R}_{F\to C} \mathbf{P}^F + \mathbf{t}_{F\to C}}_{\mathbf{P}^C}\right)$$
 
-체커보드 코너로 카메라 내부파라미터 K, 왜곡 계수 D, 보드-카메라 변환을 초기 추정합니다.
+여기서 왜곡 연산자 $\mathbf{d}$는 $z$로 나누는 정규화 과정을 포함하며 왜곡 모델을 적용한다.
 
-### 3. 공동 최적화 (Joint Optimization)
+---
 
-**파라미터 벡터**:
+## 3. 잔차(Residual) 및 비용 함수
 
-```
-Θ = [f_x, f_y, c_x, c_y, k_1, k_2, ..., ω_L→C, t_L→C]
-```
+### 3.1 체커보드 코너 잔차
+이미지 $k$의 코너 $(i, j)$에 대해:
+$$\mathbf{r}_{k,ij}^{\text{corner}} = \mathbf{p}_{k,ij}^{\text{proj}}(\Theta) - \mathbf{p}_{k,ij}^{\text{obs}}$$
 
-**비용 함수**:
+### 3.2 원형 홀(Circle-hole) 잔차
+LiDAR로 검출한 3D 중심점 $\mathbf{P}_{k,h}^{\mathcal{L}}$을 이미지로 투영한 값과 보드 설계상 예상되는 2D 중심점 $\mathbf{p}_{k,h}^{\text{obs}}$ 사이의 오차:
+$$\mathbf{r}_{k,h}^{\text{circle}} = \mathbf{p}_{k,h}^{\text{proj}}(\Theta) - \mathbf{p}_{k,h}^{\text{obs}}$$
 
-```
-F(Θ) = Σ|r_circle|² + Σ|r_corner|²
-```
+### 3.3 총 목적 함수 (비선형 최소제곱)
+$$F(\Theta) = \sum_{k,h} \|\mathbf{r}_{k,h}^{\text{circle}}\|^2 + \sum_{k,i,j} \|\mathbf{r}_{k,ij}^{\text{corner}}\|^2$$
 
-- **r_circle**: LiDAR 원형 홀 3D 좌표를 투영한 값과 보드 기하로 계산한 2D 좌표의 차이
-- **r_corner**: 체커보드 코너의 재투영 오차
+---
 
-### 4. Levenberg-Marquardt 최적화
+## 4. 최적화 알고리즘 (Levenberg–Marquardt)
 
-**Damped Normal Equations**:
+Ceres Solver 등을 사용하여 **댐핑된 정규 방정식(Damped Normal Equations)**을 푼다:
 
-```
-(J^T J + λI) ΔΘ = -J^T r
-```
+$$(\mathbf{J}^{\top}\mathbf{J} + \lambda\mathbf{I})\Delta\Theta = -\mathbf{J}^{\top}\mathbf{r}$$
 
-- λ > 0: gradient descent와 Gauss-Newton 사이를 조절
-- λ가 크면 → gradient descent (안정적, 느림)
-- λ가 작으면 → Gauss-Newton (빠름, 수렴 근처)
-- 구현: **Ceres Solver** + AutoDiffCostFunction
+여기서 $\mathbf{J}$는 야코비안 행렬($\partial\mathbf{r}/\partial\Theta$)이며, 업데이트 규칙은 $\Theta \leftarrow \Theta + \Delta\Theta$이다. 댐핑 계수 $\lambda$는 오차가 줄어들면 작게, 늘어나면 크게 조절하여 최적해로 수렴시킨다.
 
-## C++ 모듈 구성
+---
 
-| 단계 | 모듈 | 핵심 라이브러리 |
-|------|------|--------------|
-| Data IO | SensorBagIO | OpenCV, PCL |
-| 보드 검출 | BoardDetector | OpenCV findChessboardCorners, PCL RANSAC |
-| 초기 카메라 캘립 | CameraCalibrator | OpenCV calibrateCamera |
-| 초기 외부파라미터 | ExtrinsicInit | 보드 정렬 또는 수동 설정 |
-| 공동 최적화 | JointOptimizer | Ceres Solver |
-| 검증 및 저장 | CalibResult | YAML, 오버레이 시각화 |
+## 5. C++ 모듈 구조
 
-## 기존 방법 대비 장점
+| 단계 | 모듈 | 핵심 클래스 / 라이브러리 |
+| :--- | :--- | :--- |
+| 데이터 IO | `SensorBagIO` | OpenCV `cv::imread`, PCL `pcl::io::loadPCDFile` |
+| 타겟 검출 | `BoardDetector` | OpenCV `findChessboardCorners`, PCL RANSAC |
+| 초기 카메라 보정 | `CameraCalibrator` | OpenCV `cv::calibrateCamera` (Zhang 방법) |
+| 초기 외부파라미터 | `ExtrinsicInit` | 보드 정렬 또는 하드웨어 설계값 기반 |
+| 공동 최적화 | `JointOptimizer` | Ceres Solver (`AutoDiffCostFunction`) |
+| 검증 및 저장 | `CalibResult` | YAML 저장 및 시각화 |
 
-1. **내부파라미터의 미세 오류를 보정**: 2단계 방식에서 전파되는 오차를 제거
-2. **서브픽셀 수준의 재투영 오차** 달성
-3. **거친 초기화에도 수렴**: LiDAR-카메라 외부파라미터를 대략적으로만 설정해도 LM 최적화로 보정 가능
+---
 
-## 데이터 수집 시 유의사항
+## 결론
 
-- 보드를 이미지의 중앙~가장자리까지 고르게 배치
-- 10개 이상의 Pose에서 촬영
-- 근거리와 원거리 모두 포함
+공동 최적화는 카메라 내부파라미터를 고정된 상수가 아닌 잠재 변수로 처리함으로써, LiDAR-카메라 정합 시 발생하는 시스템적 오차를 제거한다. 원형 홀과 체커보드 잔차를 동시에 사용하는 LM 솔버는 거친 초기값에서도 안정적으로 수렴하며, 실전에서 서브픽셀 수준의 재투영 오차를 달성한다.
 
 </div>
