@@ -142,7 +142,7 @@ $$\frac{\partial \mathbf{P}^C}{\partial \boldsymbol\omega} \approx -[\mathbf{P}^
 
 ---
 
-## 7. 벤치마킹 프로토콜
+## 7. 성능 평가 및 정확도 검증 방법
 
 1. 보드가 FOV 전체를 커버하도록 10개 이상의 포즈 수집 (근거리 + 원거리)
 2. 2단계 baseline과 공동 최적화 방법을 각 5회 실행 (랜덤 초기 노이즈)
