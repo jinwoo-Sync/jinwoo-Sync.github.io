@@ -13,17 +13,19 @@ tags: [Calibration, LiDAR, IMU, SLAM, Validation]
     </ol>
   </nav>
 
-  <h1 class="mb-3">LiDAR-IMU Calibration 검증 방법론</h1>
-  <p class="text-muted">사내 R&D팀 캘리브레이션 연구 — 논문 서베이 및 실전 검증 시나리오 제안</p>
+  <h1 class="mb-3">LiDAR-IMU Calibration 검증 방법론 (논문 서베이)</h1>
+  <p class="text-muted">사내 R&D팀 캘리브레이션 연구 — 4편의 논문 서베이 및 실전 검증 시나리오 제안</p>
 
-  <div class="alert alert-light border mt-3">
-    <strong>서베이 대상 논문:</strong>
-    <ol class="mb-0 mt-2">
-      <li>J. Lv et al., <em>"Targetless Calibration of LiDAR-IMU System Based on Continuous-time Batch Estimation"</em>, IROS 2020</li>
-      <li>J. Li et al., <em>"3D LiDAR/IMU Calibration Based on Continuous-Time Trajectory Estimation in Structured Environments"</em>, IEEE Access 2021</li>
-      <li>J. Lv et al., <em>"Observability-Aware Intrinsic and Extrinsic Calibration of LiDAR-IMU Systems"</em> (OA-LICalib), IEEE T-RO 2022</li>
-      <li>G. Yan et al., <em>"An Extrinsic Calibration Method of a 3D-LiDAR and a Pose Sensor for Autonomous Driving"</em> (LiDAR2INS), arXiv 2022</li>
-    </ol>
+  <div class="card mt-4 mb-4">
+    <div class="card-header"><strong>서베이 대상 논문</strong></div>
+    <div class="card-body">
+      <ol class="mb-0">
+        <li class="mb-2"><strong>LI_Calib</strong> — J. Lv et al., <em>"Targetless Calibration of LiDAR-IMU System Based on Continuous-time Batch Estimation"</em>, <strong>IROS 2020</strong></li>
+        <li class="mb-2">J. Li et al., <em>"3D LiDAR/IMU Calibration Based on Continuous-Time Trajectory Estimation in Structured Environments"</em>, <strong>IEEE Access 2021</strong></li>
+        <li class="mb-2"><strong>OA-LICalib</strong> — J. Lv et al., <em>"Observability-Aware Intrinsic and Extrinsic Calibration of LiDAR-IMU Systems"</em>, <strong>IEEE T-RO 2022</strong></li>
+        <li><strong>LiDAR2INS</strong> — G. Yan et al., <em>"An Extrinsic Calibration Method of a 3D-LiDAR and a Pose Sensor for Autonomous Driving"</em>, <strong>arXiv 2022</strong></li>
+      </ol>
+    </div>
   </div>
 
   <hr>

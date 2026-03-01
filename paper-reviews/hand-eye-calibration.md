@@ -16,8 +16,8 @@ tags: [Calibration, Hand-Eye, Rodrigues, SVD]
     </ol>
   </nav>
 
-  <h1 class="mb-3">Hand-Eye Calibration: AX=XB 문제</h1>
-  <p class="text-muted">F. Park, B. Martin — IEEE Trans. Robotics and Automation, 1994</p>
+  <h1 class="mb-3">Robot Sensor Calibration: Solving AX=XB on the Euclidean Group</h1>
+  <p class="text-muted">F. Park, B. Martin — IEEE Transactions on Robotics and Automation, 10(5): 717-721, 1994</p>
 
   <hr>
 

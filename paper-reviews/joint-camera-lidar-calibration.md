@@ -16,7 +16,7 @@ tags: [Calibration, LiDAR, Camera, Joint Optimization, Ceres]
     </ol>
   </nav>
 
-  <h1 class="mb-3">Joint Camera Intrinsic & LiDAR–Camera Extrinsic Calibration</h1>
+  <h1 class="mb-3">Joint Camera Intrinsic and LiDAR-Camera Extrinsic Calibration</h1>
   <p class="text-muted">Yan et al. — arXiv:2202.13708, 2022</p>
 
   <hr>
