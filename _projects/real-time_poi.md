@@ -39,12 +39,12 @@ order: 4
 
 ### [센서 퓨전 및 위치 추정 안정화]
 - **오픈소스 기반 위치 추정 최적화**: 짧은 개발 기간 내에 신뢰성 있는 위치 데이터를 확보하기 위해 **[mad-location-manager](https://github.com/maddevsio/mad-location-manager)** (Mad Kalman Filter)를 시스템에 안정적으로 통합 및 적용했다.
-- **데이터 정합성 보장**: Kalman Filter를 통해 GPS 노이즈를 억제하고, GNSS Raw Measurements(4Hz) 및 GPS(1Hz) 데이터를 효율적으로 핸들링하여 실무 환경에서 수용 가능한 수준의 위치 추정 성능을 보장하는 시스템을 구축했다.
+- **데이터 정합성 보장**: Kalman Filter를 통해 GPS 노이즈를 억제하고, GNSS Raw Measurements(4Hz) 및 GPS(1Hz) 데이터를 효율적으로 핸들링하여 **서비스 환경 수준**에서 수용 가능한 수준의 위치 추정 성능을 보장하는 시스템을 구축했다.
 - **데이터 정합성 유지**: GPS 음영 지역 이탈 시, 신호 단절 구간 동안 로컬 타임으로 수집된 데이터들에 최신 GPS 시간 오프셋을 **소급 적용(Backdating)**하여 전체 데이터셋의 시간축을 정렬하는 로직 구현
 
 ## 개발 현황 및 최종 결과
 - **현재 상태**: **BM(Business Model) 모델 설계 이슈로 인해 서버 연동 및 실시간 전송 기능 개발 잠정 중단**
-- **최종 성과**: 기기 단독형(Standalone) 고성능 POI 탐지 및 고정밀 데이터 로깅 시스템으로서의 기술 검증 완료 및 시험 배포판(v1.0) 완성
+- **공학적 성과**: 기존 Lite 장비의 생산·운용 파이프라인(3D 외형 제작, 센서 조립/보정, PC 환경 및 원격 세팅 등)을 앱 설치 및 업데이트 방식으로 일원화하여, **제품 생애 주기 전반의 Man-Month를 혁신적으로 절감할 수 있는 양산형 모바일 솔루션의 기술적 토대**를 마련했다.
 
 ## 프로젝트 결과물
 ![](/assets/images/projects/real-time_poi/system_overview.png)
