@@ -7,19 +7,11 @@ venue: "arXiv:2202.13708, 2022"
 tags: [Calibration, LiDAR, Camera, Joint Optimization, Ceres]
 ---
 
-<div class="container py-5">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ '/' | relative_url }}">홈</a></li>
-      <li class="breadcrumb-item"><a href="{{ '/papers.html' | relative_url }}">논문 리뷰</a></li>
-      <li class="breadcrumb-item active">Joint Camera-LiDAR Calibration</li>
-    </ol>
-  </nav>
+# Joint Camera Intrinsic & LiDAR–Camera Extrinsic Calibration
 
-  <h1 class="mb-3">Joint Camera Intrinsic & LiDAR–Camera Extrinsic Calibration</h1>
-  <p class="text-muted">Yan et al. — arXiv:2202.13708, 2022</p>
+**Yan et al. — arXiv:2202.13708, 2022**
 
-  <hr>
+---
 
 ## 개요
 
@@ -42,7 +34,7 @@ tags: [Calibration, LiDAR, Camera, Joint Optimization, Ceres]
 
 최종적으로 구하고자 하는 파라미터 벡터 $\Theta$는 다음과 같이 정의된다:
 
-$$\Theta = [\underbrace{f_x, f_y, c_x, c_y, k_1, k_2, \dots}_{\Theta_{\text{int}}}, \underbrace{\boldsymbol\omega_{L\to C}, \mathbf{t}_{L\to C}}_{\Theta_{\text{ext}}}]^{\top}$$
+**$$\Theta = [\underbrace{f_x, f_y, c_x, c_y, k_1, k_2, \dots}_{\Theta_{\text{int}}}, \underbrace{\boldsymbol\omega_{L\to C}, \mathbf{t}_{L\to C}}_{\Theta_{\text{ext}}}]^{\top}$$**
 
 ---
 
@@ -50,7 +42,7 @@ $$\Theta = [\underbrace{f_x, f_y, c_x, c_y, k_1, k_2, \dots}_{\Theta_{\text{int}
 
 3D 공간의 점 $\mathbf{P}^F$를 이미지 평면상의 2D 좌표 $\mathbf{p}$로 투영하는 식은 다음과 같다:
 
-$$\mathbf{p} = \begin{bmatrix}u \\ v \\ 1\end{bmatrix} = \mathbf{K} \cdot \mathbf{d}\left(\underbrace{\mathbf{R}_{F\to C} \mathbf{P}^F + \mathbf{t}_{F\to C}}_{\mathbf{P}^C}\right)$$
+**$$\mathbf{p} = \begin{bmatrix}u \\ v \\ 1\end{bmatrix} = \mathbf{K} \cdot \mathbf{d}\left(\underbrace{\mathbf{R}_{F\to C} \mathbf{P}^F + \mathbf{t}_{F\to C}}_{\mathbf{P}^C}\right)$$**
 
 여기서 왜곡 연산자 $\mathbf{d}$는 $z$로 나누는 정규화 과정을 포함하며 왜곡 모델을 적용한다.
 
@@ -60,14 +52,14 @@ $$\mathbf{p} = \begin{bmatrix}u \\ v \\ 1\end{bmatrix} = \mathbf{K} \cdot \mathb
 
 ### 3.1 체커보드 코너 잔차
 이미지 $k$의 코너 $(i, j)$에 대해:
-$$\mathbf{r}_{k,ij}^{\text{corner}} = \mathbf{p}_{k,ij}^{\text{proj}}(\Theta) - \mathbf{p}_{k,ij}^{\text{obs}}$$
+**$$\mathbf{r}_{k,ij}^{\text{corner}} = \mathbf{p}_{k,ij}^{\text{proj}}(\Theta) - \mathbf{p}_{k,ij}^{\text{obs}}$$**
 
 ### 3.2 원형 홀(Circle-hole) 잔차
 LiDAR로 검출한 3D 중심점 $\mathbf{P}_{k,h}^{\mathcal{L}}$을 이미지로 투영한 값과 보드 설계상 예상되는 2D 중심점 $\mathbf{p}_{k,h}^{\text{obs}}$ 사이의 오차:
-$$\mathbf{r}_{k,h}^{\text{circle}} = \mathbf{p}_{k,h}^{\text{proj}}(\Theta) - \mathbf{p}_{k,h}^{\text{obs}}$$
+**$$\mathbf{r}_{k,h}^{\text{circle}} = \mathbf{p}_{k,h}^{\text{proj}}(\Theta) - \mathbf{p}_{k,h}^{\text{obs}}$$**
 
 ### 3.3 총 목적 함수 (비선형 최소제곱)
-$$F(\Theta) = \sum_{k,h} \|\mathbf{r}_{k,h}^{\text{circle}}\|^2 + \sum_{k,i,j} \|\mathbf{r}_{k,ij}^{\text{corner}}\|^2$$
+**$$F(\Theta) = \sum_{k,h} \|\mathbf{r}_{k,h}^{\text{circle}}\|^2 + \sum_{k,i,j} \|\mathbf{r}_{k,ij}^{\text{corner}}\|^2$$**
 
 ---
 
@@ -75,7 +67,7 @@ $$F(\Theta) = \sum_{k,h} \|\mathbf{r}_{k,h}^{\text{circle}}\|^2 + \sum_{k,i,j} \
 
 Ceres Solver 등을 사용하여 **댐핑된 정규 방정식(Damped Normal Equations)**을 푼다:
 
-$$(\mathbf{J}^{\top}\mathbf{J} + \lambda\mathbf{I})\Delta\Theta = -\mathbf{J}^{\top}\mathbf{r}$$
+**$$(\mathbf{J}^{\top}\mathbf{J} + \lambda\mathbf{I})\Delta\Theta = -\mathbf{J}^{\top}\mathbf{r}$$**
 
 여기서 $\mathbf{J}$는 야코비안 행렬($\partial\mathbf{r}/\partial\Theta$)이며, 업데이트 규칙은 $\Theta \leftarrow \Theta + \Delta\Theta$이다. 댐핑 계수 $\lambda$는 오차가 줄어들면 작게, 늘어나면 크게 조절하여 최적해로 수렴시킨다.
 
@@ -97,5 +89,3 @@ $$(\mathbf{J}^{\top}\mathbf{J} + \lambda\mathbf{I})\Delta\Theta = -\mathbf{J}^{\
 ## 결론
 
 공동 최적화는 카메라 내부파라미터를 고정된 상수가 아닌 잠재 변수로 처리함으로써, LiDAR-카메라 정합 시 발생하는 시스템적 오차를 제거한다. 원형 홀과 체커보드 잔차를 동시에 사용하는 LM 솔버는 거친 초기값에서도 안정적으로 수렴하며, 실전에서 서브픽셀 수준의 재투영 오차를 달성한다.
-
-</div>

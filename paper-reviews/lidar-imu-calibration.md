@@ -4,19 +4,11 @@ title: "LiDAR-IMU Calibration 검증 방법"
 tags: [Calibration, LiDAR, IMU, SLAM, Validation]
 ---
 
-<div class="container py-5">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ '/' | relative_url }}">홈</a></li>
-      <li class="breadcrumb-item"><a href="{{ '/papers.html' | relative_url }}">논문 리뷰</a></li>
-      <li class="breadcrumb-item active">LiDAR-IMU Calibration</li>
-    </ol>
-  </nav>
+# LiDAR-IMU Calibration 및 검증 전략
 
-  <h1 class="mb-3">LiDAR-IMU Calibration 및 검증 전략</h1>
-  <p class="text-muted">R&D팀 캘리브레이션 연구 및 검증 방법 정리</p>
+**R&D팀 캘리브레이션 연구 및 검증 방법 정리**
 
-  <hr>
+---
 
 ## 1. LiDAR-IMU Calibration 방법론
 
@@ -62,14 +54,12 @@ tags: [Calibration, LiDAR, IMU, SLAM, Validation]
 
 단순 연구를 넘어 실제 제품의 신뢰성을 확보하기 위한 보수적인 검증 시나리오다.
 
-1. **시뮬레이션 및 설계값 비교 (GT 확보)**
-   - 정확한 설계상의 $R|t$ 값을 얻을 수 있는 시뮬레이션 환경(Isaac Sim 등) 구축.
-   - 환경 변화와 노이즈를 추가하며 알고리즘의 한계를 테스트한다.
-2. **실측 데이터 $R|t$ 비교 검증**
-   - IMU 위치만을 의도적으로 변경(예: y축으로 5cm 이동)하여 데이터를 취득하고, 캘리브레이션 결과가 해당 변화를 정확히 찾아내는지 확인한다.
-3. **재투영 오차 시각화 (Project to Image)**
-   - LiDAR-IMU 캘리브레이션 결과가 적용된 포인트를 카메라 이미지에 재투영한다. (LiDAR-Cam 캘리브레이션이 완벽하다는 가정 하에 수행)
-4. **타겟 배치 및 CAD 모델링 시뮬레이션**
-   - 캘리브레이션 룸(Calib-shop) 구성 시 기준이 될 수 있는 타겟(가로/세로 봉 등)을 배치하고 이를 시뮬레이션과 실측 데이터에서 비교 평가한다.
-
-</div>
+1.  **시뮬레이션 및 설계값 비교 (GT 확보)**
+    - 정확한 설계상의 $R|t$ 값을 얻을 수 있는 시뮬레이션 환경(Isaac Sim 등) 구축.
+    - 환경 변화와 노이즈를 추가하며 알고리즘의 한계를 테스트한다.
+2.  **실측 데이터 $R|t$ 비교 검증**
+    - IMU 위치만을 의도적으로 변경(예: y축으로 5cm 이동)하여 데이터를 취득하고, 캘리브레이션 결과가 해당 변화를 정확히 찾아내는지 확인한다.
+3.  **재투영 오차 시각화 (Project to Image)**
+    - LiDAR-IMU 캘리브레이션 결과가 적용된 포인트를 카메라 이미지에 재투영한다. (LiDAR-Cam 캘리브레이션이 완벽하다는 가정 하에 수행)
+4.  **타겟 배치 및 CAD 모델링 시뮬레이션**
+    - 캘리브레이션 룸(Calib-shop) 구성 시 기준이 될 수 있는 타겟(가로/세로 봉 등)을 배치하고 이를 시뮬레이션과 실측 데이터에서 비교 평가한다.
