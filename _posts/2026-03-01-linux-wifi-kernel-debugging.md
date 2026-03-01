@@ -4,13 +4,13 @@ title: "Intel BE201 WiFi 칩 커널 버그 디버깅 — 19단계 삽질기"
 tags: [Linux, Kernel, Debugging, WiFi, NUC]
 ---
 
-무인이송 프로젝트에서 Intel NUC의 WiFi가 야외 테스트 중 반복적으로 다운되는 문제를 겪었다. 이 글은 문제를 추적하고 해결하기까지의 19단계 디버깅 과정을 기록한 글이다.
+H그룹 용역 프로젝트에서 Intel NUC의 WiFi가 야외 테스트 중 반복적으로 다운되는 문제를 겪었다. 이 글은 문제를 추적하고 해결하기까지의 19단계 디버깅 과정을 기록한 글이다.
 
 ## 환경
 
 - **하드웨어**: Intel NUC + Intel BE201 WiFi 칩
 - **OS**: Ubuntu 24.04
-- **용도**: NUC Hotspot을 통한 무인이송 장비 원격 제어
+- **용도**: NUC Hotspot을 통한 현장 장비 원격 제어
 
 ## 문제 발생
 
