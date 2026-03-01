@@ -10,7 +10,7 @@ order: 4
 ---
 
 ## 프로젝트 개요
-산업용 카메라, LiDAR, Jetson AGX 등 고가의 하드웨어 구성을 스마트폰 단일 기기로 대체하여 운영 비용을 90% 이상 절감하는 모바일 기반 POI 탐지 및 고정밀 데이터 수집 솔루션이다.
+산업용 카메라, LiDAR, Jetson AGX 등 고가의 하드웨어 구성을 스마트폰 단일 기기로 대체하여 운영 비용을 90% 이상 절감하는 모바일 기반 POI 탐지 솔루션이다. 단순한 기능 구현을 넘어, 공학적으로 판매부터 유지보수 단계까지 발생하는 실제 Man-Month 비용을 극단적으로 절감할 수 있는 선행 개발을 수행했다.
 
 ## 활동 내용
 
@@ -31,9 +31,9 @@ order: 4
 - **적응형 추론 제어**: `DeepLearningAdaptiveManager` 구현을 통해 하드웨어 부하(Latency)에 따라 추론 주기(Skip Interval)를 동적으로 조절하여 시스템 안정성 확보
 - **YOLOv8 TFLite**: YOLOv8 모델 경량화 및 TFLite GPU Delegate 적용으로 모바일 환경 실시간 추론 성능 달성
 
-### [센서 퓨전 및 데이터 정밀도]
-- **하이브리드 시간 동기화**: `DataSynchronizer`를 통한 GPS/Local 시간 오프셋 보정 및 나노초(ns) 단위 데이터 동기화 구현
-- **고정밀 데이터 수집**: GNSS Raw Measurements(Clock, Satellite Status, Nav Message) 및 IMU(50Hz) 데이터의 저지연 수집 로직 구축
+### [센서 퓨전 및 위치 추정 안정화]
+- **오픈소스 기반 위치 추정 최적화**: 짧은 개발 기간 내에 신뢰성 있는 위치 데이터를 확보하기 위해 **[mad-location-manager](https://github.com/maddevsio/mad-location-manager)** (Mad Kalman Filter)를 시스템에 안정적으로 통합 및 적용했다.
+- **데이터 정합성 보장**: Kalman Filter를 통해 GPS 노이즈를 억제하고, GNSS Raw Measurements(4Hz) 및 GPS(1Hz) 데이터를 효율적으로 핸들링하여 실무 환경에서 수용 가능한 수준의 위치 추정 성능을 보장하는 시스템을 구축했다.
 - **데이터 정합성 유지**: GPS 음영 지역 이탈 시, 신호 단절 구간 동안 로컬 타임으로 수집된 데이터들에 최신 GPS 시간 오프셋을 **소급 적용(Backdating)**하여 전체 데이터셋의 시간축을 정렬하는 로직 구현
 
 ### [데이터 스트리밍 및 서버 연동]
