@@ -20,8 +20,7 @@ order: 7
 
 - **자율주행 제어 안정화:** PID 제어기를 직접 구현하여 횡/종 방향 제어를 안정화하고, 응답성 개선을 위한 파라미터 튜닝을 반복적으로 수행
 - **Global + Local Path Planning:** GPS 기반 global path를 작성하고 cost map을 이용한 local path planning을 추가하여 동적 장애물 회피 시나리오를 처리
-- **센서 캘리브레이션 & 융합:** Camera-LiDAR 캘리브레이션 도구를 제작하고 IMU-GPS 칼만 필터 기반 융합 시스템을 구성하여 **K-City 실측 데이터**로 검증
-- **멀티 센서 로깅 파이프라인:** Hikvision 카메라, Velodyne/Hesai LiDAR, 고정밀 GNSS, DMI/IMU 센서를 동기화하여 데이터셋을 구축하고 분석 가능하게 정리
+- **센서 캘리브레이션 & 융합:** 미션 구역 인식 및 구역 내 정밀 제어를 위해 Camera-LiDAR 캘리브레이션과 센서 융합을 수행. GPS 초기 좌표 기반의 Global Pose에서 IMU의 Heading 값을 보정하기 위한 단순 칼만 필터(Kalman Filter)를 구현하여 주행 방향의 정밀도를 확보함
 
 ## Local Path Planning 세부 구조
 
