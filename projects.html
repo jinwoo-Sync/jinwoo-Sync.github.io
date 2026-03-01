@@ -1,33 +1,37 @@
 ---
 layout: default
-title: Projects
+title: 프로젝트
 ---
-<div class="container py-5" data-aos="fade-up">
-  <header class="mb-5">
-    <h1 class="display-4 mb-3">Projects</h1>
-    <p class="lead text-muted">
-      센서 융합, 캘리브레이션, MMS, POI 검출 등 회사에서 진행한 주요 프로젝트들입니다.
-    </p>
-  </header>
+<div class="page-header">
+  <div class="container">
+    <h1>프로젝트</h1>
+    <p>센서 융합, GIS 데이터 처리, 캘리브레이션, MMS 등 주요 프로젝트들입니다.</p>
+  </div>
+</div>
 
-  {% assign categories = "Calibration,Mobile Mapping System,Mobile Application & AI,Time Synchronization,Academic & Competition" | split: "," %}
+<div class="container py-4">
 
-  {% for category in categories %}
-    {% assign projects = site.projects | where: "category", category | sort: "date" | reverse %}
-    {% if projects.size > 0 %}
-    <section class="mb-5" data-aos="fade-up">
-      <h2 class="h3 mb-4 pb-2 border-bottom">
-        <i class="bi bi-folder"></i> {{ category }}
-      </h2>
-      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+  <!-- Current Projects -->
+  <section class="mb-5" data-aos="fade-up">
+    <h2 class="h3 mb-4 pb-2 border-bottom">
+      <i class="bi bi-lightning-charge"></i> 현재 진행 중
+    </h2>
+
+    {% assign current_categories = "GIS & Data Pipeline,Autonomous System,Mobile Application & AI" | split: "," %}
+
+    {% for category in current_categories %}
+      {% assign projects = site.projects | where: "category", category | sort: "order" %}
+      {% if projects.size > 0 %}
+      <h3 class="h5 text-muted mt-4 mb-3">{{ category }}</h3>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
         {% for project in projects %}
-        <div class="col" data-aos="zoom-in" data-aos-delay="{{ forloop.index | times: 100 }}">
-          <div class="card h-100 shadow-sm hover-card">
+        <div class="col" data-aos="fade-up" data-aos-delay="{{ forloop.index | times: 100 }}">
+          <div class="card h-100 hover-card">
             {% if project.thumbnail %}
-            <img src="{{ project.thumbnail | relative_url }}" class="card-img-top" alt="{{ project.title }}" style="height: 200px; object-fit: cover;">
+            <img src="{{ project.thumbnail | relative_url }}" class="card-img-top" alt="{{ project.title }}">
             {% else %}
-            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-              <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
+              <i class="bi bi-code-square text-muted" style="font-size: 2.5rem;"></i>
             </div>
             {% endif %}
             <div class="card-body">
@@ -37,7 +41,7 @@ title: Projects
                 </a>
               </h5>
               <p class="text-muted small mb-2">
-                <i class="bi bi-calendar"></i> {{ project.period }}
+                <i class="bi bi-calendar3"></i> {{ project.period }}
                 {% if project.role %}
                 <br><i class="bi bi-person"></i> {{ project.role }}
                 {% endif %}
@@ -47,7 +51,7 @@ title: Projects
             {% if project.tech %}
             <div class="card-footer bg-transparent border-top-0">
               <small class="text-muted">
-                <i class="bi bi-tools"></i> {{ project.tech | truncate: 50 }}
+                <i class="bi bi-tools"></i> {{ project.tech | truncate: 60 }}
               </small>
             </div>
             {% endif %}
@@ -55,30 +59,59 @@ title: Projects
         </div>
         {% endfor %}
       </div>
-    </section>
-    {% endif %}
-  {% endfor %}
+      {% endif %}
+    {% endfor %}
+  </section>
+
+  <!-- Past Projects -->
+  <section class="mb-5" data-aos="fade-up">
+    <h2 class="h3 mb-4 pb-2 border-bottom">
+      <i class="bi bi-archive"></i> 과거 프로젝트
+    </h2>
+
+    {% assign past_categories = "Calibration,Mobile Mapping System,Time Synchronization,Academic & Competition" | split: "," %}
+
+    {% for category in past_categories %}
+      {% assign projects = site.projects | where: "category", category | sort: "order" %}
+      {% if projects.size > 0 %}
+      <h3 class="h5 text-muted mt-4 mb-3">{{ category }}</h3>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+        {% for project in projects %}
+        <div class="col" data-aos="fade-up" data-aos-delay="{{ forloop.index | times: 100 }}">
+          <div class="card h-100 hover-card">
+            {% if project.thumbnail %}
+            <img src="{{ project.thumbnail | relative_url }}" class="card-img-top" alt="{{ project.title }}">
+            {% else %}
+            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
+              <i class="bi bi-code-square text-muted" style="font-size: 2.5rem;"></i>
+            </div>
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">
+                <a href="{{ project.url | relative_url }}" class="text-decoration-none stretched-link">
+                  {{ project.title }}
+                </a>
+              </h5>
+              <p class="text-muted small mb-2">
+                <i class="bi bi-calendar3"></i> {{ project.period }}
+                {% if project.role %}
+                <br><i class="bi bi-person"></i> {{ project.role }}
+                {% endif %}
+              </p>
+              <p class="card-text">{{ project.excerpt | strip_html | truncate: 120 }}</p>
+            </div>
+            {% if project.tech %}
+            <div class="card-footer bg-transparent border-top-0">
+              <small class="text-muted">
+                <i class="bi bi-tools"></i> {{ project.tech | truncate: 60 }}
+              </small>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endfor %}
+  </section>
 </div>
-
-<style>
-.hover-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.hover-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
-}
-
-.card-body a {
-  color: inherit;
-}
-
-.card-body a:hover {
-  color: #0d6efd;
-}
-
-.bi {
-  margin-right: 0.25rem;
-}
-</style>

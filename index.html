@@ -1,47 +1,60 @@
 ---
 layout: default
-title: Home
+title: 홈
 ---
 <section class="hero">
   <div class="container">
-    <h1 class="display-4" data-aos="fade-up">Welcome to My Homepage</h1>
-    <p class="lead" data-aos="fade-up" data-aos-delay="200">
-      센서 융합 기반 실시간 시스템 개발과 대규모 데이터 처리 파이프라인 구축에 특화된 연구 개발 엔지니어입니다.
-      LiDAR/카메라/IMU 등 이기종 센서의 하드웨어 인터페이스부터 SLAM, 캘리브레이션, 모바일 매핑 시스템까지
-      End-to-End 개발 경험을 보유하고 있으며, 확장 가능한 아키텍처 설계와 자동화된 처리 시스템 구축을 통해
-      연구 성과를 실용적인 제품으로 전환하는 데 주력하고 있습니다.
+    <p class="subtitle" data-aos="fade-up">Sensor Fusion &middot; Deep Learning &middot; Geospatial Data</p>
+    <h1 class="display-4" data-aos="fade-up" data-aos-delay="100">서진우</h1>
+    <p class="lead mt-3" data-aos="fade-up" data-aos-delay="200">
+      센서 융합과 딥러닝 기반 지리공간 데이터 처리를 전문으로 하는 연구 개발 엔지니어입니다.<br>
+      LiDAR/카메라/IMU 등 이기종 센서의 하드웨어 인터페이스부터 GIS 파이프라인, 캘리브레이션,
+      딥러닝 시스템까지 Edge 컴퓨팅 중심의 개발 경험을 보유하고 있으며,
+      도시 단위의 대규모 데이터 처리 최적화와 현장 배포에 주력하고 있습니다.
     </p>
-    <h2 class="h4 mt-4" data-aos="fade-up" data-aos-delay="400">GitHub Stats</h2>
-    <img data-aos="zoom-in" data-aos-delay="600" src="https://github-readme-stats.vercel.app/api?username=jinwoo-Sync&show_icons=true&theme=default" alt="jinwoo-Sync's GitHub Stats" class="img-fluid">
+    <div class="mt-4" data-aos="fade-up" data-aos-delay="400">
+      <img src="https://github-readme-stats.vercel.app/api?username=jinwoo-Sync&show_icons=true&theme=transparent&hide_border=true&title_color=3b82f6&text_color=94a3b8&icon_color=3b82f6" alt="GitHub Stats" class="img-fluid" style="max-width: 480px;">
+    </div>
   </div>
 </section>
+
 <section class="content-section" data-aos="fade-up">
   <div class="container text-center">
-    <h2>Explore</h2>
-    <p>Check out my languages, CV and papers.</p>
-    <a class="btn btn-light m-2" href="languages.html">Languages</a>
-    <a class="btn btn-light m-2" href="cv.html">CV</a>
-    <a class="btn btn-light m-2" href="papers.html">Papers</a>
+    <h2 class="section-title">둘러보기</h2>
+    <p class="text-muted">기술 스택, 이력서, 논문 리뷰를 확인하세요.</p>
+    <a class="btn btn-outline-primary m-2" href="languages.html">Languages</a>
+    <a class="btn btn-outline-primary m-2" href="cv.html">CV</a>
+    <a class="btn btn-outline-primary m-2" href="papers.html">논문 리뷰</a>
   </div>
 </section>
+
 <section class="content-section" data-aos="fade-up">
   <div class="container">
-    <h2 class="mb-4">Latest Posts</h2>
+    <h2 class="section-title">최근 블로그 포스트</h2>
     <div class="row row-cols-1 row-cols-md-2 g-4">
       {% for post in site.posts limit:2 %}
       <div class="col">
         <div class="card h-100">
-          <img src="{{ post.thumbnail | default: 'https://via.placeholder.com/300x150' }}" class="card-img-top" alt="thumbnail">
+          {% if post.thumbnail %}
+          <img src="{{ post.thumbnail }}" class="card-img-top" alt="thumbnail">
+          {% endif %}
           <div class="card-body">
             <h5 class="card-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h5>
-            <p class="card-text">{{ post.excerpt | strip_html | truncate: 100 }}</p>
+            <p class="card-text text-muted">{{ post.excerpt | strip_html | truncate: 120 }}</p>
+            {% if post.tags %}
+            <div>
+              {% for tag in post.tags %}
+              <span class="tag">{{ tag }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
           </div>
         </div>
       </div>
       {% endfor %}
     </div>
     <div class="text-end mt-3">
-      <a class="btn btn-light" href="posts.html">More Posts</a>
+      <a class="btn btn-outline-primary" href="posts.html">더 보기 &rarr;</a>
     </div>
   </div>
 </section>

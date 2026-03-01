@@ -3,7 +3,7 @@ layout: project
 title: "Calibration Program Optimization"
 period: "2022.06 ~ 2023.06"
 category: "Calibration"
-tech_stack: "C++"
+tech: "C++, OpenCV, PnP Algorithm"
 role: "Research Engineer"
 company: "Mobiltech (Internal R&D)"
 order: 1

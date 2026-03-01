@@ -3,7 +3,7 @@ layout: project
 title: "Replica Program (Mobile Mapping System) Tool Development"
 period: "2022.03 ~ Present"
 category: "Mobile Mapping System"
-tech_stack: "C++"
+tech: "C++, LiDAR/Camera SDK, NVIDIA Orin"
 role: "Team Member"
 company: "Mobiltech (Core System)"
 order: 5

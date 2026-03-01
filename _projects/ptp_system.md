@@ -3,7 +3,7 @@ layout: project
 title: "Data Synchronization (Mapping System)"
 period: "2023.02 ~ Present"
 category: "Time Synchronization"
-tech_stack: "C++"
+tech: "C++, PTP, GPRMC, GPIO"
 role: "Team Member"
 company: "Mobiltech (Core System)"
 order: 6

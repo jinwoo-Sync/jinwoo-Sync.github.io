@@ -3,7 +3,7 @@ layout: project
 title: "Real-time POI Detection Program - Mobile Version"
 period: "2025.03 ~ Present"
 category: "Mobile Application & AI"
-tech_stack: "Kotlin"
+tech: "Kotlin, YOLOv8, Kafka, Android"
 role: "Project Manager & Lead Developer"
 company: "Mobiltech (Internal R&D)"
 order: 4

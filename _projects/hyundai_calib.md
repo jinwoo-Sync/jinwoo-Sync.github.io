@@ -3,7 +3,7 @@ layout: project
 title: "Camera-Camera and Camera-Map Calibration Tool"
 period: "2023.04 ~ 2024.03"
 category: "Calibration"
-tech_stack: "C#"
+tech: "C#, OpenCV, PnP Algorithm"
 role: "Project Manager & Lead Developer"
 company: "Mobiltech (Hyundai Motors Contract)"
 order: 2
