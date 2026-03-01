@@ -1,11 +1,79 @@
 ---
 layout: default
-title: Papers
+title: 논문 리뷰
 ---
-<div class="container py-5" data-aos="fade-up">
-    <h1 class="mb-4">Research Papers</h1>
-    <ul class="list-unstyled">
-        <li><a href="paper-reviews/paper1.md">Paper One Review</a></li>
-        <li><a href="paper-reviews/paper2.md">Paper Two Review</a></li>
-    </ul>
+<div class="page-header">
+  <div class="container">
+    <h1>논문 리뷰</h1>
+    <p>캘리브레이션, 센서 융합 관련 논문 리뷰 및 기술 정리입니다.</p>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" data-aos="fade-up">
+
+    <div class="col">
+      <div class="card h-100 paper-card">
+        <div class="card-body">
+          <h5 class="card-title">
+            <a href="{{ '/paper-reviews/hand-eye-calibration.html' | relative_url }}" class="text-decoration-none">
+              Hand-Eye Calibration (AX=XB)
+            </a>
+          </h5>
+          <p class="text-muted small">F. Park, B. Martin — IEEE Trans. Robotics, 1994</p>
+          <p class="card-text">
+            로봇 팔-카메라 간의 AX=XB 문제를 Rodrigues 벡터와 SVD로 풀어내는 Park 방법 리뷰.
+          </p>
+          <div>
+            <span class="tag">Calibration</span>
+            <span class="tag">Rodrigues</span>
+            <span class="tag">SVD</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card h-100 paper-card">
+        <div class="card-body">
+          <h5 class="card-title">
+            <a href="{{ '/paper-reviews/joint-camera-lidar-calibration.html' | relative_url }}" class="text-decoration-none">
+              Joint Camera-LiDAR Calibration
+            </a>
+          </h5>
+          <p class="text-muted small">Yan et al. — arXiv:2202.13708</p>
+          <p class="card-text">
+            카메라 내부파라미터와 LiDAR-카메라 외부파라미터를 공동 최적화하는 방법. 하이브리드 보드 설계와 Levenberg-Marquardt 최적화.
+          </p>
+          <div>
+            <span class="tag">LiDAR-Camera</span>
+            <span class="tag">Joint Optimization</span>
+            <span class="tag">LM</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card h-100 paper-card">
+        <div class="card-body">
+          <h5 class="card-title">
+            <a href="{{ '/paper-reviews/lidar-imu-calibration.html' | relative_url }}" class="text-decoration-none">
+              LiDAR-IMU Calibration 검증 방법론
+            </a>
+          </h5>
+          <p class="text-muted small">사내 연구 — Mobiltech</p>
+          <p class="card-text">
+            LiDAR-IMU 캘리브레이션의 검증 방법론 서베이. 시뮬레이션, 실측 비교, 재투영 검증 시나리오 제안.
+          </p>
+          <div>
+            <span class="tag">LiDAR-IMU</span>
+            <span class="tag">Verification</span>
+            <span class="tag">Simulation</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>

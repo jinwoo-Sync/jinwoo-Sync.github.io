@@ -2,11 +2,35 @@
 layout: default
 ---
 <div class="container py-5" data-aos="fade-up">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ '/' | relative_url }}">홈</a></li>
+      <li class="breadcrumb-item"><a href="{{ '/posts.html' | relative_url }}">블로그</a></li>
+      <li class="breadcrumb-item active">{{ page.title }}</li>
+    </ol>
+  </nav>
+
   <article>
-    <h1 class="mb-4">{{ page.title }}</h1>
-    {% if page.thumbnail %}
-    <img src="{{ page.thumbnail }}" class="img-fluid mb-3" alt="thumbnail">
+    <h1 class="mb-2">{{ page.title }}</h1>
+    <p class="text-muted mb-4">{{ page.date | date: "%Y-%m-%d" }}</p>
+    {% if page.tags %}
+    <div class="mb-4">
+      {% for tag in page.tags %}
+      <span class="tag">{{ tag }}</span>
+      {% endfor %}
+    </div>
     {% endif %}
-    {{ content }}
+    {% if page.thumbnail %}
+    <img src="{{ page.thumbnail }}" class="img-fluid rounded mb-4" alt="thumbnail">
+    {% endif %}
+    <div class="project-content">
+      {{ content }}
+    </div>
   </article>
+
+  <div class="mt-5 pt-4 border-top">
+    <a href="{{ '/posts.html' | relative_url }}" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left"></i> 블로그 목록
+    </a>
+  </div>
 </div>

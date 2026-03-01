@@ -42,17 +42,51 @@ title: CV
       <div class="col-md-6 mb-3">
         <p><strong>Sensors:</strong> LiDAR (Hesai, Velodyne), Camera (Hikvision, E-con), GPS/GNSS, IMU, DMI</p>
       </div>
-      <div class="col-md-12 mb-3">
-        <p><strong>AI/ML:</strong> YOLOv8, TensorRT, TFLite INT8 Quantization</p>
+      <div class="col-md-6 mb-3">
+        <p><strong>AI/ML:</strong> YOLOv8, TensorRT, TFLite INT8, SAM, EfficientNet</p>
+      </div>
+      <div class="col-md-6 mb-3">
+        <p><strong>GIS/Geospatial:</strong> PDAL, GDAL, Rasterio, LAS/TIF/SHP processing</p>
       </div>
       <div class="col-md-12 mb-3">
-        <p><strong>Tools:</strong> Git, Qt, CMake, Docker</p>
+        <p><strong>Tools:</strong> Git, Qt, CMake, Docker, Nuitka, UV</p>
       </div>
     </div>
   </section>
 
   <section class="mb-5">
     <h2 class="h3 mb-4 border-bottom pb-2">Major Projects</h2>
+
+    <article class="mb-4">
+      <h3 class="h5 mb-2">Indonesia GIS Data Processing Pipeline</h3>
+      <p class="text-muted mb-2">July 2025 - Present | Python, C#, PDAL, SAM, EfficientNet | Lead Developer</p>
+      <ul>
+        <li>Built an end-to-end GIS pipeline processing aerial survey data (LAS, TIF, SHP).</li>
+        <li>Converted research team's Python scripts to C# and integrated Python runtime within the C# application.</li>
+        <li>Developed custom DTM generation algorithm achieving 33x performance improvement (36 hours → 3 minutes for 69GB data).</li>
+        <li>Implemented SHP overlap detection/merging, multi-layer point cloud division, and LOD mesh generation.</li>
+      </ul>
+    </article>
+
+    <article class="mb-4">
+      <h3 class="h5 mb-2">Python Deployment System (Nuitka)</h3>
+      <p class="text-muted mb-2">December 2025 - Present | Python, Nuitka, PyTorch, UV, GDAL | Lead Developer</p>
+      <ul>
+        <li>Compiled 13 Python scripts to native binaries using Nuitka for secure deployment.</li>
+        <li>Resolved PyTorch onefile PE loader limitations by switching to standalone mode with selective module exclusion.</li>
+        <li>Managed multi-environment builds with UV package manager for reproducible compilation.</li>
+      </ul>
+    </article>
+
+    <article class="mb-4">
+      <h3 class="h5 mb-2">Unmanned Delivery System</h3>
+      <p class="text-muted mb-2">July 2025 - Present | C++, Hesai LiDAR SDK, Linux | Developer</p>
+      <ul>
+        <li>Integrated Hesai LiDAR SDK into the unmanned delivery platform running on Intel NUC.</li>
+        <li>Diagnosed and tracked a Linux kernel-level WiFi bug (Bug #220034) through 19 debugging stages.</li>
+        <li>Configured and stabilized network infrastructure (hostapd, dnsmasq) for field deployment.</li>
+      </ul>
+    </article>
 
     <article class="mb-4">
       <h3 class="h5 mb-2">Camera-Camera / Camera-Map Calibration Tool (Hyundai Motor Company)</h3>
@@ -119,11 +153,11 @@ title: CV
     <h2 class="h3 mb-4 border-bottom pb-2">Academic & Research Projects</h2>
 
     <article class="mb-4">
-      <h3 class="h5 mb-2">Autonomous Driving Control & Path Planning / 국제 대학생 창작 자동차 경진대회 2020~2021 참가</h3>
-      <p class="text-muted mb-2">March 2020 - October 2021 | C++, ROS, CAMERA ,GPS, LiDAR, IMU | Team Leader & Member</p>
+      <h3 class="h5 mb-2">Autonomous Driving Control & Path Planning</h3>
+      <p class="text-muted mb-2">March 2020 - October 2021 | C++, ROS, Camera, GPS, LiDAR, IMU | Team Leader</p>
       <ul>
+        <li>Participated in the International University Student Creative Car Competition (2020-2021).</li>
         <li>Implemented PID controllers to stabilize autonomous driving.</li>
-        <li>Tuned parameters to improve responsiveness.</li>
         <li>Developed GPS-based path planning and dynamic obstacle avoidance.</li>
         <li>Built Camera-LiDAR calibration tools and IMU-GPS Kalman filter fusion system (validated at K-City).</li>
       </ul>
@@ -142,7 +176,7 @@ title: CV
   <section class="mb-5">
     <h2 class="h3 mb-4 border-bottom pb-2">Additional Activities</h2>
     <ul>
-      <li>Participant, 'LikeLion (멋쟁이 사자처럼)', 2018</li>
+      <li>Participant, 'LikeLion', 2018</li>
     </ul>
   </section>
 </div>
