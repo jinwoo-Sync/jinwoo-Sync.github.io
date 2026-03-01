@@ -46,11 +46,24 @@
 <script>AOS.init();</script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 <script>
-  mermaid.initialize({ 
-    startOnLoad: true,
-    theme: 'default',
-    securityLevel: 'loose',
-    fontFamily: 'Poppins, sans-serif'
+  document.addEventListener("DOMContentLoaded", function() {
+    // Find all 'pre' blocks that contain 'code.language-mermaid'
+    const mermaidBlocks = document.querySelectorAll("pre code.language-mermaid");
+    mermaidBlocks.forEach(function(block) {
+      const div = document.createElement("div");
+      div.className = "mermaid";
+      div.textContent = block.textContent;
+      const pre = block.parentElement;
+      pre.parentElement.replaceChild(div, pre);
+    });
+
+    // Initialize mermaid after DOM elements are replaced
+    mermaid.initialize({ 
+      startOnLoad: true,
+      theme: 'default',
+      securityLevel: 'loose',
+      fontFamily: 'Poppins, sans-serif'
+    });
   });
 </script>
 </body>
