@@ -10,6 +10,13 @@
   <link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
   <link rel="stylesheet" href="{{ '/css/aos.css' | relative_url }}">
   {% seo %}
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
 </head>
 <body>
 {% include navbar.html %}
