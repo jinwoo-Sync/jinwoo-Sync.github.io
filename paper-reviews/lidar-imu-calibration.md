@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "LiDAR-IMU Calibration 검증 방법론"
+title: "LiDAR-IMU Calibration 검증 방법론 (논문 서베이)"
 tags: [Calibration, LiDAR, IMU, SLAM, Validation]
 ---
 
@@ -15,6 +15,16 @@ tags: [Calibration, LiDAR, IMU, SLAM, Validation]
 
   <h1 class="mb-3">LiDAR-IMU Calibration 검증 방법론</h1>
   <p class="text-muted">사내 R&D팀 캘리브레이션 연구 — 논문 서베이 및 실전 검증 시나리오 제안</p>
+
+  <div class="alert alert-light border mt-3">
+    <strong>서베이 대상 논문:</strong>
+    <ol class="mb-0 mt-2">
+      <li>J. Lv et al., <em>"Targetless Calibration of LiDAR-IMU System Based on Continuous-time Batch Estimation"</em>, IROS 2020</li>
+      <li>J. Li et al., <em>"3D LiDAR/IMU Calibration Based on Continuous-Time Trajectory Estimation in Structured Environments"</em>, IEEE Access 2021</li>
+      <li>J. Lv et al., <em>"Observability-Aware Intrinsic and Extrinsic Calibration of LiDAR-IMU Systems"</em> (OA-LICalib), IEEE T-RO 2022</li>
+      <li>G. Yan et al., <em>"An Extrinsic Calibration Method of a 3D-LiDAR and a Pose Sensor for Autonomous Driving"</em> (LiDAR2INS), arXiv 2022</li>
+    </ol>
+  </div>
 
   <hr>
 
@@ -64,9 +74,9 @@ tags: [Calibration, LiDAR, IMU, SLAM, Validation]
 
 ## 4. 논문별 검증 방법 분석
 
-### 4.1 LI_Calib (IROS 2020)
+### 4.1 "Targetless Calibration of LiDAR-IMU System Based on Continuous-time Batch Estimation" (LI_Calib, IROS 2020)
 
-Targetless, 모션 기반 연속 시간 배치 추정(Continuous-time Batch Estimation) 알고리즘이다.
+Targetless, 모션 기반 연속 시간 배치 추정 알고리즘이다.
 
 ![LI_Calib 실험 환경]({{ '/assets/images/papers/lidar-imu-calibration/li_calib_env.png' | relative_url }})
 *LI_Calib 실험 센서 구성 — Velodyne LiDAR와 3개의 IMU 위치*
@@ -83,7 +93,7 @@ Targetless, 모션 기반 연속 시간 배치 추정(Continuous-time Batch Esti
 ![LI_Calib IMU 위치 변화]({{ '/assets/images/papers/lidar-imu-calibration/li_calib_imu_positions.png' | relative_url }})
 *시뮬레이션 환경 — 3개의 직교 평면과 사인파 형태 IMU 경로*
 
-### 4.2 3D LiDAR/IMU Calibration (IEEE Access 2021)
+### 4.2 "3D LiDAR/IMU Calibration Based on Continuous-Time Trajectory Estimation in Structured Environments" (IEEE Access 2021)
 
 연속시간 궤적 추정 기반, 구조화된 환경(수직 벽면, 수평 평면, 코너)에서의 캘리브레이션이다.
 
@@ -97,11 +107,11 @@ Targetless, 모션 기반 연속 시간 배치 추정(Continuous-time Batch Esti
 - **시뮬레이션**: 실제 센서 특성과 일치하도록 설정, 10 Monte-Carlo
 - **평가 지표**: 포인트클라우드 정합 오차, RMSE, 모션 모델 일관성
 
-### 4.3 OA_LICalib (TRO 2022)
+### 4.3 "Observability-Aware Intrinsic and Extrinsic Calibration of LiDAR-IMU Systems" (OA-LICalib, IEEE T-RO 2022)
 
 LI_Calib의 확장 버전으로, Observability-Aware 분석이 추가되었다. 평가 방법은 LI_Calib과 동일하다.
 
-### 4.4 LiDAR2INS (Arxiv 2022)
+### 4.4 "An Extrinsic Calibration Method of a 3D-LiDAR and a Pose Sensor for Autonomous Driving" (LiDAR2INS, arXiv 2022)
 
 실제 자율주행 환경에서의 모션 기반 캘리브레이션이다.
 
