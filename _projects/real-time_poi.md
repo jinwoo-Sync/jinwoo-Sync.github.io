@@ -28,11 +28,18 @@ order: 4
 - **메모리 관리 및 GC 부하 해결**: 초기 개발 단계에서 빈번한 비트맵 생성/소멸로 인한 GC(Garbage Collection) 오버헤드로 앱이 30분 이내에 강제 종료되던 치명적인 결함 해결
 - **가동 시간 혁신 (30분 → 3시간+)**: `AdvancedTaggedBitmapPool`(60 Slots) 및 제로카피(Zero-copy) 기반의 `HighSpeedZeroCopyProcessor`를 직접 설계·구현하여 GC 부하를 원천 차단, 차량 부착 테스트 시 **3시간 이상 연속 가동**되는 안정성을 확보하여 시험 배포 단계 달성
 
+#### 안정성 및 결함 분석 테스트
+| 야외 주행 및 장기 가동 테스트 (안정화 후) | GC 오버헤드로 인한 앱 크래시 사례 (안정화 전) |
+| :---: | :---: |
+| ![](/assets/images/projects/real-time_poi/1000007319.gif) <br> ![](/assets/images/projects/real-time_poi/1000007347.gif) | ![](/assets/images/projects/real-time_poi/1000007357.gif) |
+| **안정적인 15fps 유지 및 3시간+ 연속 가동** | **비정상적 메모리 점유 및 시스템 강제 종료** |
+
 ### [개발 프로세스 및 아키텍처]
 - **Clean Architecture 적용**: Data, UI, Domain 레이어 분리를 통해 모듈 간 의존성을 낮추고 확장성 확보
 - **비동기 파이프라인**: Kotlin Coroutines Actor 모델 및 Channel/Flow를 활용하여 센서 데이터의 논블로킹(Non-blocking) 병렬 처리 구현
 
 ### [안드로이드 앱 개발 및 최적화]
+- **Target Device 최적화**: 고부하 연산 처리를 위해 **Samsung Galaxy S20 Ultra 및 S21 Ultra** 환경을 기준으로 시스템 개발 및 하드웨어 가속 최적화 수행
 - **고성능 이미지 파이프라인**: Camera2 API 연동 및 하드웨어 가속을 통한 15fps 고정 프레임 스트리밍 제어
 - **고속 이미지 처리**: YUV_420_888 to RGB 변환 최적화 및 FFmpeg 기반의 영상 인코딩 로직 구축으로 CPU 점유율 30% 이상 절감
 
