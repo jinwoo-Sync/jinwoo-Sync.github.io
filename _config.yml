@@ -1,6 +1,7 @@
 title: Jinwoo's Portfolio
 author: Jinwoo
 markdown: kramdown
+future: true
 plugins:
   - jekyll-seo-tag
 
