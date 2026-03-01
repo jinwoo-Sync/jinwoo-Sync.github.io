@@ -45,43 +45,43 @@ SHP 생성 과정에서 겹치는 영역을 자동 감지하고 정리하는 기
 
 ## DTM(Digital Terrain Model) 생성 파이프라인
 
-기존 PDAL CSF 방식 대비 연산 속도와 정밀도를 획기적으로 개선한 커스텀 DTM 생성 알고리즘이다. 고부하 연산을 효율적으로 처리하기 위해 Voxel/Block 통계 분석과 CPU 병렬 처리를 결합했다.
+기존 PDAL CSF 방식의 긴 처리 시간을 단축하기 위해, **속도 최적화를 목표로 정밀도를 일정 수준 타협한 프로그램 내장형 임시 DTM 맵 생성 알고리즘**을 구축했다. 고부하 연산을 효율적으로 처리하기 위해 Voxel/Block 통계 분석과 CPU 병렬 처리를 결합하여 실제 서비스 가용성을 높였다.
 
 ![DTM 생성 파이프라인]({{ '/assets/images/projects/indonesia_gis/dtm_pipeline_flowchart.png' | relative_url }})
 *DTM 생성 전체 파이프라인 — Raw Points에서 최종 DTM.tif까지*
 
 ```mermaid
 graph TD
-    Raw[Raw Point Cloud] --> Step1[<b>Step 1: 지면 점군 추출</b><br/>Ground Extraction]
+    Raw["Raw Point Cloud"] --> Step1["<b>Step 1: 지면 점군 추출</b><br/>Ground Extraction"]
     
-    subgraph Filtering [Ground Filtering Logic]
-    Step1 --> Voxel[Voxel 기반 높이 분포 분석 및 최저점 클러스터링]
-    Voxel --> Block[Block 단위 평면성 분석 및 Edge Height 필터링]
-    Block --> Remove[건물 및 인공 구조물 정교 제거]
+    subgraph Filtering ["Ground Filtering Logic"]
+    Step1 --> Voxel["Voxel 기반 높이 분포 분석 및 최저점 클러스터링"]
+    Voxel --> Block["Block 단위 평면성 분석 및 Edge Height 필터링"]
+    Block --> Remove["건물 및 인공 구조물 정교 제거"]
     end
     
-    Remove --> Step2[<b>Step 2: 초기 그리드 생성</b><br/>Grid Generation]
+    Remove --> Step2["<b>Step 2: 초기 그리드 생성</b><br/>Grid Generation"]
     
-    subgraph Grid [Parallel Processing]
-    Step2 --> Parallel[CPU 코어별 로컬 그리드 독립 연산 및 병합]
-    Parallel --> MinZ[MinZ 기반 지면 시드 할당]
+    subgraph Grid ["Parallel Processing"]
+    Step2 --> Parallel["CPU 코어별 로컬 그리드 독립 연산 및 병합"]
+    Parallel --> MinZ["MinZ 기반 지면 시드 할당"]
     end
     
-    MinZ --> Step3[<b>Step 3: Voxel 기반 구멍 메우기</b><br/>Hole Filling]
+    MinZ --> Step3["<b>Step 3: Voxel 기반 구멍 메우기</b><br/>Hole Filling"]
     
-    subgraph Interpolation [Optimization]
-    Step3 --> Prop[대형 Voxel 참조 기반 지형 전파 알고리즘]
-    Prop --> Water[수역 보존 및 O-N 복잡도 고속 보간]
+    subgraph Interpolation ["Optimization"]
+    Step3 --> Prop["대형 Voxel 참조 기반 지형 전파 알고리즘"]
+    Prop --> Water["수역 보존 및 O(N) 복잡도 고속 보간"]
     end
     
-    Water --> Step4[<b>Step 4: 스무딩 및 데이터 출력</b><br/>Smoothing & Output]
+    Water --> Step4["<b>Step 4: 스무딩 및 데이터 출력</b><br/>Smoothing & Output"]
     
-    subgraph Output [Finalization]
-    Step4 --> Smooth[인접 셀 가중 평균 기반 지형 경계 스무딩]
-    Smooth --> Save[32-bit GeoTiff & .tfw 월드 파일 생성]
+    subgraph Output ["Finalization"]
+    Step4 --> Smooth["인접 셀 가중 평균 기반 지형 경계 스무딩"]
+    Smooth --> Save["32-bit GeoTiff & .tfw 월드 파일 생성"]
     end
     
-    Save --> FinalDTM[<b>최종 고정밀 DTM</b>]
+    Save --> FinalDTM["<b>최종 고정밀 DTM</b>"]
     
     style Step1 fill:#f9f,stroke:#333,stroke-width:2px
     style Step2 fill:#bbf,stroke:#333,stroke-width:2px
