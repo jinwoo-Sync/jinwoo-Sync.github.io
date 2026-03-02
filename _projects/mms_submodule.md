@@ -1,7 +1,7 @@
 ---
 layout: project
 title: "MMS (Mobile Mapping System) sub module develop"
-period: "2025.01 ~ 2025.07"
+period: "2024.10 ~ 2025.07"
 category: "Mobile Mapping System"
 tech: "C++, LiDAR SDK, IMU, GPS"
 role: "Lead Developer"

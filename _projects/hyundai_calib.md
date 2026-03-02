@@ -1,7 +1,7 @@
 ---
 layout: project
 title: "Camera-Camera and Camera-Map Calibration Tool"
-period: "2023.04 ~ 2024.03"
+period: "2023.04 ~ 2024.09"
 category: "Calibration"
 tech: "C#, OpenCV, PnP Algorithm"
 role: "Project Manager & Lead Developer"
