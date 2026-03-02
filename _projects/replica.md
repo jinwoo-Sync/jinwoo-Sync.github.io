@@ -41,6 +41,6 @@ order: 5
 
 ### 공인 인증
 
-해당 시스템은 **Mobiltech Logging Suite(MLS)** 라는 제품명으로 **공인 GS(Good Software) 인증**을 획득하였습니다.
+- **Mobiltech Logging Suite(MLS)**: 공인 GS(Good Software) 인증 획득
 
 ![](/assets/images/projects/replica/공인_GS인증.png)
