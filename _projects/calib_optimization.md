@@ -29,7 +29,6 @@ order: 1
 
 ![](/assets/images/projects/calib_optimization/workflow.png)
 
-![](/assets/images/projects/calib_optimization/result1.png)
 
 [ 결과물 ]
 
