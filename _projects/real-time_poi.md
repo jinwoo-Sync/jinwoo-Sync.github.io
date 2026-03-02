@@ -1,7 +1,7 @@
 ---
 layout: project
 title: "Real-time POI Detection Program - Mobile Version"
-period: "2025.03 ~ Present"
+period: "2025.01 ~ 2025.09"
 category: "Mobile Application & AI"
 tech: "Kotlin, Coroutines, YOLOv8(TFLite), Camera2 API, GNSS Raw, FFmpeg"
 role: "Project Manager & Lead Developer"
