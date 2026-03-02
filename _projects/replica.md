@@ -26,7 +26,7 @@ order: 5
 ## 상세 업무 및 기여 (Responsibilities & Contributions)
 
 ### 1. 신규 카메라 인터페이스 개발 및 MMS 특화 데이터(DMI) 확보
-- **문제 상황/목표**: 고정밀 매핑 수요에 따른 신규 센서(Hik, E-con MIPI, E-con GMSL) 연동과 함께, 기존 시스템에서 부재했던 정밀 거리/시간 정보(DMI)의 실시간 확보가 필요.
+- **문제 상황/목표**: 고정밀 매핑을 위한 신규 센서(Hik, E-con MIPI, E-con GMSL) 연동 및 기존 시스템에서 부재했던 **정밀 거리/시간 정보(DMI)의 로깅 필요**.
 - **해결 방안 (Action)**: Hikvision 및 MIPI/GMSL 카메라 인터페이스를 신규 구현. 특히 **LV125 프로토콜을 정밀 분석하여 DMI(Distance Measurement Instrument) 데이터를 직접 파싱**하고, 이를 전체 시스템 파이프라인에 통합. 또한 ARM(NVIDIA Orin) 환경 최적화 수행.
 - **결과 (Result)**: 기존에 없던 정밀 거리 데이터를 백엔드 시스템에 공급함으로써 **'10m 단위 Local SLAM 맵 제작'** 및 **'DMI 기반 정시 상황 판단 로깅'** 기능을 실현. 저전력 ARM 환경에서도 고해상도 이미지와 MMS 특화 데이터를 동시에 안정적으로 수집하는 구조 확립.
 
