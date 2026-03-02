@@ -14,7 +14,7 @@ tags: [Calibration, LiDAR, IMU, SLAM, Validation]
   </nav>
 
   <h1 class="mb-3">LiDAR-IMU Calibration 검증 방법론 (논문 서베이)</h1>
-  <p class="text-muted">주요 캘리브레이션 논문 서베이 및 실전 검증 시나리오 분석</p>
+  <p class="text-muted">사내 R&D팀 캘리브레이션 연구 — 4편의 논문 서베이 및 실전 검증 시나리오 제안</p>
 
   <div class="card mt-4 mb-4">
     <div class="card-header"><strong>서베이 대상 논문</strong></div>
@@ -23,8 +23,7 @@ tags: [Calibration, LiDAR, IMU, SLAM, Validation]
         <li class="mb-2"><strong>LI_Calib</strong> — J. Lv et al., <em>"Targetless Calibration of LiDAR-IMU System Based on Continuous-time Batch Estimation"</em>, <strong>IROS 2020</strong></li>
         <li class="mb-2">J. Li et al., <em>"3D LiDAR/IMU Calibration Based on Continuous-Time Trajectory Estimation in Structured Environments"</em>, <strong>IEEE Access 2021</strong></li>
         <li class="mb-2"><strong>OA-LICalib</strong> — J. Lv et al., <em>"Observability-Aware Intrinsic and Extrinsic Calibration of LiDAR-IMU Systems"</em>, <strong>IEEE T-RO 2022</strong></li>
-        <li class="mb-2"><strong>LiDAR2INS</strong> — G. Yan et al., <em>"An Extrinsic Calibration Method of a 3D-LiDAR and a Pose Sensor for Autonomous Driving"</em>, <strong>arXiv 2022</strong></li>
-        <li><strong>GRIL-Calib</strong> — T. Shan et al., <em>"GRIL-Calib: Targetless Ground Robot IMU-LiDAR Extrinsic Calibration Method using Ground Plane Motion Constraints"</em>, <strong>IEEE RA-L 2024</strong></li>
+        <li><strong>LiDAR2INS</strong> — G. Yan et al., <em>"An Extrinsic Calibration Method of a 3D-LiDAR and a Pose Sensor for Autonomous Driving"</em>, <strong>arXiv 2022</strong></li>
       </ol>
     </div>
   </div>
@@ -35,21 +34,23 @@ tags: [Calibration, LiDAR, IMU, SLAM, Validation]
 
 ## 배경
 
-LiDAR-IMU 캘리브레이션의 **검증 방법**을 체계화하기 위해, 최신 논문(2020~2024)의 검증 전략을 서베이하고 실제 산업 현장에 적용 가능한 시나리오를 분석한 문서이다. 단순 연구 목적이 아닌 **시스템 신뢰성 확보**를 위해 보수적인 검증이 필요하다는 관점에서 작성되었다.
+회사 내부에서 LiDAR-IMU 캘리브레이션의 **검증 방법**을 체계화하기 위해, 주요 논문의 검증 전략을 서베이하고 사내 적용 가능한 시나리오를 제안한 연구다. 단순 연구 목적이 아닌 **제품 신뢰성 확보**를 위해 보수적인 검증이 필요하다는 판단 하에 작성했다.
 
 ---
 
 ## 1. LiDAR-IMU Calibration 방법 분류
 
 ### 1.1 타겟 기반 (Target-based)
-특정 타겟의 위치 및 자세를 활용하여 LiDAR와 IMU 간의 상대 변환 행렬 $R \| t$를 계산한다.
-- **다중 특징 보드 및 평면 타겟**: 타공판(Circular holes) 또는 체커보드를 활용하여 LiDAR와 카메라/열화상 센서 등을 동시 보정
-- **원통형 기둥(Poles)**: 고반사율 테이프 등을 부착하여 엣지와 곡률 중심을 추출하는 방식
+특정 타겟의 위치 및 자세를 활용하여 LiDAR와 IMU 간의 상대 변환 행렬 $T_L^I \in SE(3)$를 계산한다.
+- **체커보드 및 평면 타겟**: LiDAR로 타겟을 감지하고, IMU의 중력 벡터 기반 자세 추정치를 결합하여 상대적인 $R_L^I \| \mathbf{p}_L^I$를 도출
+- **레이저 트래커**: 고정밀 레이저 장치를 사용하여 LiDAR와 IMU의 상대 위치를 직접 측정
 
 ### 1.2 모션 기반 (Motion-based)
 두 센서에 동일한 움직임을 부여하고, 각각의 데이터를 결합해 변환 관계를 추정한다.
-- **연속 시간 궤적 최적화**: B-Spline 기반 궤적 추정 및 EKF/LM 기반 비선형 최적화
-- **평면 운동 제약 (Planar Constraints)**: 지상 로봇 등 평면 이동 모델에서 발생하는 Z축 및 Roll/Pitch의 비관측성(Unobservability)을 수식적으로 해결
+- **비선형 최적화**: LiDAR 오도메트리와 IMU 데이터를 EKF 또는 Levenberg-Marquardt로 최적화. B-spline 기반의 연속 시간 궤적 $T_{WI}(t) \in SE(3)$ 추정 활용.
+- **지면 평면 제약 (Ground Plane Constraints)**: 지면이 고정 평면임을 가정, LiDAR 지면 감지와 IMU 중력 벡터 비교
+- **NDT**: LiDAR 정합 움직임과 IMU 움직임을 비교
+- **Kalman Filter**: IMU 각속도/가속도 적분 → LiDAR 오도메트리와 ESIKF 결합
 
 ---
 
@@ -59,14 +60,15 @@ LiDAR-IMU 캘리브레이션의 **검증 방법**을 체계화하기 위해, 최
 | :--- | :--- | :--- |
 | 타겟 기반 | **Kalibr** (ETH-ASL) | 카메라/IMU/LiDAR 통합 캘리브레이션 |
 | 타겟리스 (초기화) | **LI_init** (HKU-Mars) | LiDAR-IMU 초기화 및 캘리브레이션 |
-| 타겟리스 (모션) | **GRIL_Calib** | 지면 평면 제약 기반 주행 캘리브레이션 (ROS1/2 지원) |
+| 타겟리스 (모션) | **GRIL_Calib** | 지면 평면 제약 기반 주행 캘리브레이션 |
 | 종합 패키지 | **OpenCalib** (PJLab) | LiDAR2INS, LiDAR2Cam 등 다양한 센서 보정 |
 
 ---
 
-## 3. 캘리브레이션 검증 방법론 (시뮬레이션 기반)
+## 3. 캘리브레이션 시뮬레이터
 
-*(참고: CARLA, Gazebo, Isaac Sim 등의 시뮬레이터가 LiDAR-IMU 캘리브레이션 검증에 널리 사용된다)*
+![캘리브레이션 시뮬레이터 비교]({{ '/assets/images/papers/lidar-imu-calibration/isaac_sim.png' | relative_url }})
+*주요 시뮬레이터 비교 — CARLA와 Gazebo가 LiDAR-IMU 캘리브레이션 검증에 널리 사용된다*
 
 **10 Monte-Carlo Simulations**: 동일한 시뮬레이션을 노이즈나 초기 조건을 달리하여 10번 반복 실행하여, 알고리즘의 성능/정확도/일관성을 통계적으로 평가하는 방법이다.
 
@@ -74,63 +76,93 @@ LiDAR-IMU 캘리브레이션의 **검증 방법**을 체계화하기 위해, 최
 
 ## 4. 논문별 검증 방법 분석
 
-### 4.1 LI_Calib (IROS 2020)
+### 4.1 "Targetless Calibration of LiDAR-IMU System Based on Continuous-time Batch Estimation" (LI_Calib, IROS 2020)
+
 Targetless, 모션 기반 연속 시간 배치 추정 알고리즘이다.
-- **데이터셋/시뮬레이션**: 3개의 직교 평면 환경과 사인파 형태의 IMU 경로. 10 Monte-Carlo 시뮬레이션 적용.
-- **결과**: 변환 오차 0.0043±0.0006m, 방향 오차 0.0224±0.0026도.
 
-### 4.2 IEEE Access 2021
-연속시간 궤적 추정 기반, 구조화된 환경(수직 벽면, 평면, 코너)에서의 캘리브레이션.
-- **평가 지표**: 포인트클라우드 정합 오차, RMSE, 모션 모델 일관성.
+![LI_Calib 실험 환경]({{ '/assets/images/papers/lidar-imu-calibration/li_calib_env.png' | relative_url }})
+*LI_Calib 실험 센서 구성 — Velodyne LiDAR와 3개의 IMU 위치*
 
-### 4.3 OA-LICalib (IEEE T-RO 2022)
-LI_Calib의 확장 버전으로, **관측 가능성(Observability-Aware)** 분석 및 데이터 선택 기법이 추가된 알고리즘이다.
-- **관측 가능성의 의미**: 센서의 움직임(Motion Excitation)이 부족한 구간(예: 단순 직진 주행)에서는 특정 축의 캘리브레이션 파라미터를 수학적으로 추정(관측)할 수 없다. 이를 무시하고 최적화를 돌리면 값이 발산하게 된다.
-- **해결 방식 (TSVD 적용)**: 최적화 과정에서 TSVD(Truncated Singular Value Decomposition)를 적용해, 현재 모션으로 관측 가능한 파라미터 방향만 업데이트하고, 불확실한 방향은 업데이트를 차단하여 오류를 방지한다.
-- **성능 향상**:
-  - 발산 방지: 직진 주행과 같은 퇴화 모션(Degenerate motion)에서도 알고리즘이 발산하지 않고 강건하게 수렴한다.
-  - 연산 최적화: 정보 이론(Information-Theoretic)을 기반으로 캘리브레이션에 유의미한 데이터 구간만 자동으로 선별하여 연산량을 크게 단축한다.
-  - 정확도: 초기 추정값(Initial guess)이 부정확해도 0.2도 이내의 높은 회전 오차 정밀도로 수렴함을 증명하였다.
+- **데이터셋**: Custom 데이터 (indoor/outdoor) + 시뮬레이션
+- **GT**: CAD 어셈블리 도면에서 추정된 3개의 IMU 위치를 참조값으로 사용
+- **시뮬레이션**: 3개의 직교 평면 환경, IMU는 사인파 경로로 이동
+  - IMU 400Hz, LiDAR 10Hz, 수평 360도 / 수직 ±15도 FOV
+  - 10 Monte-Carlo simulations (각 10초 시퀀스)
+  - 가우시안 노이즈 추가
+- **결과**: 변환 오차 0.0043±0.0006m, 방향 오차 0.0224±0.0026도
+- **평가 지표**: 포인트클라우드 정합 오차, 모션 모델 일관성
 
-### 4.4 LiDAR2INS (arXiv 2022)
-실제 자율주행 환경(교차로 8자 주행)에서의 모션 기반 캘리브레이션.
-- **GT**: 하드웨어 설계 CAD 모델 기반.
+![LI_Calib IMU 위치 변화]({{ '/assets/images/papers/lidar-imu-calibration/li_calib_imu_positions.png' | relative_url }})
+*시뮬레이션 환경 — 3개의 직교 평면과 사인파 형태 IMU 경로*
 
-### 4.5 GRIL-Calib (IEEE RA-L 2024) - 신규 분석 추가
-지상 로봇(Ground Robot)과 같이 Z축 및 특정 회전의 자극이 부족한 **평면 운동(Planar Motion)**의 제약을 수학적으로 극복한 타겟리스 알고리즘이다.
-- **데이터셋**: 평면 위 8자 주행 및 직선 주행 (M2DGR, HILTI 등 오픈 데이터셋 및 실측)
-- **제안 방법**: 지면 평면 제약(Ground Plane Motion Constraints)을 통해 부족한 DOF(자유도)의 관측성을 강제 확보하며 Rotation과 Translation을 한 번에 최적화(Single Optimization) 수행.
-- **평가 지표**: 평면 주행만으로도 전체 6-DOF 캘리브레이션의 RMSE 및 맵 매칭 오차가 크게 감소함을 증명.
+### 4.2 "3D LiDAR/IMU Calibration Based on Continuous-Time Trajectory Estimation in Structured Environments" (IEEE Access 2021)
+
+연속시간 궤적 추정 기반, 구조화된 환경(수직 벽면, 수평 평면, 코너)에서의 캘리브레이션이다.
+
+![IEEE Access 실험 환경]({{ '/assets/images/papers/lidar-imu-calibration/ieee_access_setup.png' | relative_url }})
+*구조화된 환경에서의 캘리브레이션 시뮬레이션 설정*
+
+![연속시간 궤적 시뮬레이션]({{ '/assets/images/papers/lidar-imu-calibration/continuous_time_sim.png' | relative_url }})
+*연속시간 모델 기반 센서 궤적 시뮬레이션*
+
+- **데이터셋**: 시뮬레이션 + Custom 데이터 (구조화된 환경)
+- **시뮬레이션**: 실제 센서 특성과 일치하도록 설정, 10 Monte-Carlo
+- **평가 지표**: 포인트클라우드 정합 오차, RMSE, 모션 모델 일관성
+
+### 4.3 "Observability-Aware Intrinsic and Extrinsic Calibration of LiDAR-IMU Systems" (OA-LICalib, IEEE T-RO 2022)
+
+LI_Calib의 확장 버전으로, 관측 가능성(Observability-Aware) 분석이 추가되었다. 단순 직진과 같은 퇴화 모션(Degenerate motion)에서 $\delta \boldsymbol{\xi} \in \mathbb{R}^6$ 매니폴드 업데이트 시 발산하는 문제를 해결하기 위해, 최적화 과정에 TSVD(Truncated Singular Value Decomposition)를 적용하여 관측 가능한 파라미터 방향만 업데이트하도록 개선한 것이 핵심이다. 평가 방법은 LI_Calib과 동일하다.
+
+### 4.4 "An Extrinsic Calibration Method of a 3D-LiDAR and a Pose Sensor for Autonomous Driving" (LiDAR2INS, arXiv 2022)
+
+실제 자율주행 환경에서의 모션 기반 캘리브레이션이다.
+
+![LiDAR2INS 실험 플랫폼]({{ '/assets/images/papers/lidar-imu-calibration/lidar2ins_env.png' | relative_url }})
+*실차 기반 실험 플랫폼 — Top LiDAR와 Novatel GNSS/INS*
+
+![LiDAR2INS 데이터 수집]({{ '/assets/images/papers/lidar-imu-calibration/lidar2ins_results.png' | relative_url }})
+*교차로에서 8자 주행으로 캘리브레이션 데이터 수집*
+
+- **데이터셋**: 실제 주행 환경 (복잡한 도로, 다양한 지형)
+- **GT**: CAD 모델 (하드웨어 설계값)
+- **평가 지표**: RMSE, GT 대비 회전/변환 오차
 
 ---
 
-## 5. 사내 검증 시나리오 제안
+## 5. 사내 적용 검증 시나리오 제안
 
-### 5.1 시뮬레이션 기반 Ground Truth 확보 및 관측성 한계 테스트
-- Isaac Sim과 같은 물리 기반 시뮬레이터를 활용하여 LiDAR 프레임($\mathcal{L}$)에서 IMU 프레임($\mathcal{I}$)으로의 공간적 외부 파라미터(Spatial Extrinsics)인 $\mathbf{T}_L^I \in SE(3)$ 설계값을 완벽한 Ground Truth(GT)로 확보한다.
-- 8자 주행, 사인파, 등속 직진 등 모션 궤적(Trajectory)을 다양하게 인가하며, 특정 축에 대한 Motion Excitation이 부족할 때 B-Spline 연속 시간 궤적 최적화 과정에서 매니폴드(Manifold) 상의 $\delta \boldsymbol{\xi} \in \mathbb{R}^6$ 증분 업데이트가 어느 시점부터 발산하는지(Edge case) 수치적으로 파악한다.
-- 실제 데이터 취득 시나리오와 동일한 모션 제약을 시뮬레이션 상에 구현하여, 알고리즘의 최적화 수렴성이 실측 환경의 노이즈를 어느 정도까지 허용하는지 정합성을 교차 검증한다.
+단순 연구를 넘어 실제 제품의 신뢰성을 확보하기 위해 제안한 4가지 검증 시나리오다.
 
-### 5.2 LiDAR-GNSS/IMU 오프셋 교차 검증 (8자 주행 맵 정밀도 측정)
-지상 차량 환경에서 특정 축(Z축 등)의 모션 자극이 제한적인 상황을 극복하기 위해, 8자 주행을 통한 주변 맵 정밀도 측정 방식을 활용한다.
+### 5.1 시뮬레이션 및 설계값 비교 (GT 확보)
+- 정확한 설계상의 변환 행렬 $T_L^I = \begin{bmatrix} R_L^I & \mathbf{p}_L^I \\ \mathbf{0}^\top & 1 \end{bmatrix} \in SE(3)$ 값을 완벽한 GT로 얻을 수 있는 시뮬레이션 환경(Isaac Sim 등) 구축
+- 환경 변화와 노이즈를 추가하며, 특정 축에 대한 Motion Excitation이 부족할 때 B-Spline 연속 시간 궤적 최적화 과정에서 매니폴드(Manifold) 상의 $\delta \boldsymbol{\xi}$ 증분 업데이트가 어느 시점부터 발산하는지 알고리즘의 한계를 테스트
+- 실측 데이터 시나리오와 동일하게 시뮬레이션하면 실측과 수학적 데이터 비교가 가능
+
+### 5.2 실측 데이터 오프셋 비교 검증 (8자 주행 맵 정밀도)
+
+차량/로봇과 같이 특정 축 모션이 제한적인 상태에서 8자 주행을 실시하고, 의도적으로 변경한 센서 위치 값이 캘리브레이션 결과에 정확히 반영되는지 확인한다.
 
 ![8자 주행 맵 매칭 결과]({{ '/assets/images/papers/lidar-imu-calibration/gril_calib_trajectory.gif' | relative_url }})
-- **방법**: 차량에 탑재된 센서(LiDAR, GNSS/IMU) 마운트에서 특정 축(예: y축) 오프셋을 의도적으로 5cm 물리적 이동시킨 후 8자 형태의 주행 데이터를 취득한다.
-- **검증**: 캘리브레이션 알고리즘이 도출한 변환 행렬에서 해당 축의 변화량(5cm)만을 정확히 계산해내는지 확인하고, 이를 통해 생성된 주변 맵의 매칭 정밀도를 정량적으로 평가한다.
+*센서 마운트 위치를 y축으로 5cm 차이를 두고 데이터를 취득한다. 최적화 후 도출된 변환 행렬에서 다른 파라미터는 동일하고, $\mathbf{p}_L^I$의 y값만 5cm에 근사하게 계산되어야 한다.*
 
-### 5.3 LiDAR-Camera 재투영 (Project to Image) 오차 시각화
-LiDAR-Camera 간의 복합 정밀도를 직관적으로 확인하기 위해 원형 타공 패턴 등이 포함된 캘리브레이션 전용 타겟을 활용한다.
+### 5.3 재투영 오차 시각화 (Project to Image)
+- 도출된 LiDAR-Camera 캘리브레이션 결과를 바탕으로, 3D 포인트 클라우드를 카메라 2D 이미지에 재투영
+- LiDAR-Cam 캘리브레이션이 완벽하다는 가정 하에 수행
+- 사내 오차 허용 범위(픽셀 단위) 기준 수립 필요
 
-![멀티 피처 타겟 예시]({{ '/assets/images/papers/lidar-imu-calibration/multi_feature_board.png' | relative_url }})
-- 계산된 LiDAR-Camera 캘리브레이션 행렬을 바탕으로, LiDAR 포인트 클라우드를 카메라 2D 영상 평면에 재투영한다.
-- 타공 패턴의 구멍 테두리(Edge)에 재투영된 LiDAR 포인트가 얼마나 일치하는지 육안으로 확인하고, 픽셀 단위의 허용 오차 기준을 수립한다.
+### 5.4 캘립샵 타겟 배치 및 CAD 모델링 시뮬레이션
 
-### 5.4 캘리브레이션 타겟 배치 및 수학적 모델링 교차 평가
-대형 보드 설치가 어려운 실내외 환경을 고려하여 기둥형 타겟(수직/수평 봉) 기반의 검증 환경을 구축한다.
+캘리브레이션 룸 구성 시 기준이 될 수 있는 타겟(가로/세로 봉, 타공 평면 판)을 배치하고, 시뮬레이션과 실측 데이터에서 비교 평가한다.
 
-![기둥 타겟 환경]({{ '/assets/images/papers/lidar-imu-calibration/retro_reflective_poles.png' | relative_url }})
-- 시뮬레이터 상에 동일한 규격의 기둥 타겟을 배치해 이상적인 캘리브레이션 결과를 얻은 뒤, 실측 데이터로 계산한 결과와 대조한다.
-- 시뮬레이션에서는 정상이나 실측에서 포인트 정합 오차가 발생할 경우, 소프트웨어 알고리즘 문제가 아닌 **하드웨어 설치 공차(Mounting error)**로 원인을 분리하여 진단한다.
+![멀티 피처 캘리브레이션 보드 예시]({{ '/assets/images/papers/lidar-imu-calibration/multi_feature_board.png' | relative_url }})
+*원형 홀이 있는 캘리브레이션 보드 — 거리별(1.5m, 3.0m, 4.5m) 배치*
+
+![기둥 형태의 캘리브레이션 타겟]({{ '/assets/images/papers/lidar-imu-calibration/retro_reflective_poles.png' | relative_url }})
+*봉 형태의 캘리브레이션 타겟*
+
+- 시뮬레이터 상에 동일한 규격의 타겟을 배치해 이상적인 결과를 얻고 이를 대조
+- 시뮬레이션에서 캘립 good / 실측에서 bad → 알고리즘 문제가 아닌 **하드웨어 설치 문제(Mounting error)**로 원인 분리 가능
+- 실측 데이터의 정성적 평가에 유용
 
 </div>
 </div>
