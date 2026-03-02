@@ -4,7 +4,7 @@ title: "대규모 도시급 항공 GIS 상용 툴 개발"
 period: "2025.07 ~ Present"
 category: "GIS & Data Pipeline"
 tech: "C#, Python, PDAL, GDAL, SAM, EfficientNet, Nuitka"
-role: "Lead Developer"
+role: "Team Member"
 company: "Mobiltech (Indonesia Project)"
 order: 1
 ---
