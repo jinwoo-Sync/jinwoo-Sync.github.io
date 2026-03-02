@@ -13,88 +13,49 @@ order: 4
 
 ---
 
-## 1. MTF (Modulation Transfer Function) 분석 모듈 구현
+## 1. MTF (Modulation Transfer Function) 분석 - 수식 변형 및 UI 구현
 
-> **기여도: 직접 설계 및 구현**
+> **기여도: 오픈소스 기반 수식 변형 및 Tool UI 통합**
 
-카메라 렌즈의 해상력(Sharpness)을 실시간으로 정량 평가하기 위한 MTF 분석 모듈을 직접 구현했습니다. 체커보드 패턴의 흑백 경계를 활용하여 1D 프로파일 기반의 Contrast 측정 파이프라인을 설계했습니다.
+오픈소스 MTF 분석 코드를 기반으로, 사내 Intrinsic Calibration Tool의 용도에 맞게 **Contrast 수식을 변형**하고 Qt UI에 통합하여 실시간 시각화 기능을 구현했습니다.
 
-### Signal Processing Pipeline
+### MTF 수식 변형: Michelson Contrast → 체커보드 특화
+
+일반적인 MTF 측정에는 Michelson Contrast 수식이 사용되지만, 캘리브레이션 Tool에서는 **야외 배경이 아닌 체커보드 내부의 흑백 패턴만을 대상**으로 하기 때문에, 분모를 `Imax`로 단순화하여 체커보드 영역의 명암 대비에 집중하도록 변형했습니다.
 
 ```
-Raw Image
-    │
-    ▼
-[1] 수평 중앙 라인 추출 (LineIterator, y = rows/2)
-    │
-    ▼
-[2] Moving Average Filter (3-tap, 노이즈 억제)
-    │
-    ▼
-[3] 1D Smoothing Filter (kernel: [1,1,1,1,1])
-    │
-    ▼
-[4] 1D Derivative Filter (kernel: [0,1,-1])
-    │
-    ▼
-[5] Local Max/Min Detection (±10 pixel window)
-    │  └─ threshold: |derivative| > 5
-    │
-    ▼
-[6] Distance Filter (간격 균일성 기반 이상치 제거)
-    │  └─ mean distance × 1.05 기준 필터링
-    │
-    ▼
-[7] Value Filter (밝기값 기반 이상치 제거)
-    │  └─ |value - mean| < 5 기준 필터링
-    │
-    ▼
-[8] MTF 계산: (maxMean - minMean) / maxMean
+                     Imax - Imin
+일반 Michelson  =  ───────────────
+                     Imax + Imin
+
+
+                     Imax - Imin
+본 구현 (변형)  =  ───────────────
+                       Imax
 ```
 
-### 핵심 구현 코드 (ProfileDetection.cpp)
+**변형 이유:**
+- Michelson 수식은 전체 장면의 밝기 분포를 고려하여 `Imax + Imin`으로 정규화
+- 체커보드 캘리브레이션 환경에서는 **흰색 영역(Imax)이 기준**이 되므로, `Imax`만으로 정규화하는 것이 흑백 경계의 선명도를 더 직관적으로 반영
+- 결과값 범위: 0(경계 없음) ~ 1(완벽한 흑백 대비)
 
-**1D 프로파일 추출** - 이미지 중앙 수평선에서 밝기값을 샘플링:
+### 구현 코드 (ProfileDetection.cpp)
 
 ```cpp
-cv::Point2f pt0(0, rgb.rows * 0.5);
-cv::Point2f pt1(rgb.cols, rgb.rows * 0.5);
-cv::LineIterator it(m_gray, pt0, pt1, 4);
-for (int i = 0; i < it.count; i++, ++it)
-    m_mtfProfile[i] = *(const uchar *)*it;
-```
-
-**Local Extrema Detection** - Derivative 기반으로 ±10 pixel window 내에서 극값을 검출:
-
-```cpp
-int detectSize = 10;
-for (int i = 1 + detectSize; i < size - detectSize; i++) {
-    if (abs(profile0[i]) > 5) {
-        int localMaxCnt = 0;
-        for (int j = 1; j < detectSize + 1; j++) {
-            if (profile0[i-j] < profile0[i] && profile0[i+j] < profile0[i])
-                localMaxCnt++;
-        }
-        if (localMaxCnt >= detectSize)
-            veclocalMax.push_back(cv::Point2f(i, m_processData[i]));
-    }
-}
-```
-
-**MTF 계산** - Local Max/Min 평균값의 Contrast Ratio:
-
-```cpp
-// Normalization 후 Contrast 계산
-minMean /= maxMean;   // normalize
+// Imax 기준 정규화 후 Contrast 계산
+minMean /= maxMean;   // normalize by Imax
 maxMean /= maxMean;   // = 1.0
-m_mtfValue = maxMean - minMean;  // = 1 - (minMean/maxMean)
+m_mtfValue = maxMean - minMean;  // = 1 - (Imin/Imax)
 ```
 
-### Visualization
+### UI 통합
 
-- **녹색 곡선**: Smoothing 처리된 1D 밝기 프로파일
-- **빨간 원**: 검출된 Local Maximum (밝은 영역)
-- **노란 원**: 검출된 Local Minimum (어두운 영역)
+오픈소스의 신호처리 파이프라인(Moving Average → Smoothing → Derivative → Local Max/Min Detection)을 활용하여, 변형된 수식의 결과를 Qt UI 위에 실시간으로 시각화하도록 구현했습니다.
+
+- **녹색 곡선**: Smoothing 처리된 1D 밝기 프로파일 (이미지 중앙 수평선)
+- **빨간 원**: 검출된 Local Maximum (Imax 후보)
+- **노란 원**: 검출된 Local Minimum (Imin 후보)
+- **label_MTF**: 계산된 MTF 값 실시간 표시
 
 <!-- TODO: MTF 시각화 스크린샷 추가 -->
 <!-- ![MTF Analysis](/assets/images/projects/intrinsic_tool/mtf_analysis.png) -->
