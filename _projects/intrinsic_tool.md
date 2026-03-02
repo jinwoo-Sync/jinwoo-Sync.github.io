@@ -19,82 +19,6 @@ order: 4
 
 ---
 
-## 프로그램 전체 개요
-
-Intrinsic Calibration Tool은 카메라 내부 파라미터(K, distortion)를 추정하고 검증하는 Qt 기반 GUI 도구입니다.
-
-![Tool 전체 UI 구성](/assets/images/projects/intrinsic_tool/figma_design.png)
-*Tool UI 구성 설계 문서 - 카메라 모델 선택(Pinhole/Fisheye/OmniDir), 보드 타입(Chessboard/Circle/ChArUco), 5x5 그리드 기반 FOV 커버리지 맵, 캘리브레이션 결과 저장/최적화 기능*
-
-### 핵심 파이프라인
-
-```
-이미지 입력 (IPC 공유 메모리 / 파일)
-    → 2D Corner Detection (체커보드 코너 검출)
-    → 3D Object Point 대응 (Z=0 평면 격자)
-    → OpenCV Calibration (K, dist 초기 추정)
-    → Levenberg-Marquardt 비선형 최적화 (Eigen)
-    → 3D→2D Re-projection + 시각화
-    → Intrinsic 품질 검증 (3가지 방식)
-```
-
-### 지원 기능
-
-| 기능 | 설명 |
-|------|------|
-| 카메라 모델 | Pinhole, Fisheye, OmniDir (CMei) |
-| 보드 타입 | Chessboard, CirclesGrid, ChArUco |
-| 왜곡 모델 | k1~k3 / k1~k2 / k1~k6+s1~s4 (Rational) |
-| 실시간 연동 | IPC 공유 메모리로 로깅 툴과 실시간 스트리밍 |
-| 자동 데이터 선별 | 5x5 그리드 기반 FOV 균등 배치 |
-| LM 최적화 | Intrinsic + Extrinsic 동시 최적화 |
-
-![캘리브레이션 파라미터 패널](/assets/images/projects/intrinsic_tool/tool_ui_overview.png)
-*우측 패널: 보드/모델 선택, X/Y Pose Map, XY Error Map, Projection Error/FocalLength/FOV 정보 표시*
-
----
-
-## 프로그램 주요 기능 스크린샷
-
-### 왜곡 격자(Distortion Grid) 시각화
-
-현재 추정된 K, distortion 파라미터로 가상 3D 격자를 투영하여, 렌즈 왜곡 패턴을 이미지 위에 **파란색 격자선**으로 표시합니다.
-
-![왜곡 격자 시각화](/assets/images/projects/intrinsic_tool/distortion_grid.png)
-*파란색 격자선이 이미지 위에 오버레이된 모습. 격자의 휨 정도가 렌즈 왜곡의 크기와 방향을 직관적으로 보여준다. 우측 5x5 그리드의 초록/빨강은 해당 영역의 데이터 취득 여부를 나타낸다.*
-
-### Intrinsic이 불안정할 때
-
-![불안정한 Intrinsic](/assets/images/projects/intrinsic_tool/unstable_intrinsic.png)
-*Intrinsic이 안정화되지 않았을 때의 모습. 파란색 격자선이 극도로 왜곡되어 이미지 전체를 뒤덮고 있다. 이 상태에서는 Optimizer 기능을 통해 누적 데이터 전체로 재캘리브레이션하여 개선할 수 있다.*
-
-### 이미지 전 영역 캘리브레이션 데이터 취득
-
-![전 영역 데이터 취득](/assets/images/projects/intrinsic_tool/full_fov_coverage.png)
-*detect area 체크 시 빨간색 영역으로 아직 데이터가 부족한 FOV 영역을 시각화. 이미지 전체 영역에 걸쳐 체커보드 데이터를 균등하게 확보해야 좋은 캘리브레이션 결과를 얻을 수 있다.*
-
-### 캘리브레이션 진행 중
-
-![최적화 진행 중](/assets/images/projects/intrinsic_tool/optimization_in_progress.png)
-*체커보드 코너 검출(무지개색 점) + 파란색 왜곡 격자 + 분홍색 Homography 잔차 원이 동시에 표시된 모습. 우측 5x5 그리드에서 초록색 영역은 데이터가 확보된 영역, 빨간색은 미확보 영역이다.*
-
-### 왜곡 보정 뷰 (Undistort View)
-
-![Undistort 뷰](/assets/images/projects/intrinsic_tool/undistort_view.png)
-*undistort view 체크 시 현재 K, dist로 왜곡을 보정한 이미지를 표시. 파란색 격자선이 직선으로 표시되면 왜곡 보정이 정상적으로 이루어지고 있음을 의미한다. 이미지 가장자리의 검은 영역은 왜곡 보정 과정에서 발생하는 자연스러운 현상이다.*
-
-### 실시간 라이다 투영
-
-![라이다 실시간 투영](/assets/images/projects/intrinsic_tool/lidar_realtime.png)
-*lidar projection 체크 시 IPC 공유 메모리로 수신한 라이다 포인트 클라우드를 현재 Extrinsic으로 이미지 위에 실시간 투영. 카메라-라이다 간 Extrinsic 정합 상태를 직관적으로 확인할 수 있다.*
-
-### 양호한 캘리브레이션 결과
-
-![양호한 캘리브레이션](/assets/images/projects/intrinsic_tool/calib_good_mtf.png)
-*캘리브레이션이 잘 된 상태의 전체 화면. 이미지 위에 파란색 왜곡 격자(자연스러운 곡선), 초록색 Re-projection 원(검출점과 일치), 분홍색 Homography 잔차(중앙 밀집), 녹색 MTF 프로파일 곡선이 동시에 표시된다. 우측 하단 INFO에서 ProjectionErr: 0.2 수준의 sub-pixel 정확도를 확인할 수 있다.*
-
----
-
 ## 1. MTF (Modulation Transfer Function) 분석 - 수식 변형 및 UI 구현
 
 > **기여도: 오픈소스 기반 수식 변형 및 Tool UI 통합**
@@ -140,20 +64,151 @@ maxMean /= maxMean;   // = 1.0
 m_mtfValue = maxMean - minMean;  // = 1 - (Imin/Imax)
 ```
 
-### 신호처리 파이프라인
+### 신호처리 파이프라인 상세
 
-이미지 중앙 수평선을 따라 밝기 프로파일을 추출한 뒤, 다단계 신호처리를 거쳐 Local Max/Min을 검출합니다.
+체커보드의 흑백 패턴 경계에서 **밝기 프로파일의 극값(Local Max/Min)**을 정확히 검출하는 것이 MTF 측정의 핵심입니다. 이를 위해 원시 픽셀 데이터에서 단계적으로 노이즈를 제거하고 극값 후보를 좁혀가는 **다단계 필터 체인**을 구성했습니다.
 
 ```
-이미지 중앙 수평 스캔라인 (LineIterator)
-    → Moving Average 필터 (윈도우 크기 3)
-    → 1D Smoothing 필터 (커널: {1,1,1,1,1})
-    → 1차 미분 필터 (커널: {0,1,-1})
-    → Local Max/Min 검출 (주변 10개 샘플 대비)
-    → 거리 필터 (균일하지 않은 간격의 점 제거)
-    → 값 필터 (평균에서 ±5 이상 벗어나는 점 제거)
-    → MTF 값 계산: (maxMean - minMean) / maxMean
+원시 밝기 프로파일 (Raw Pixel Intensity)
+    │
+    │  ① Moving Average (윈도우 크기 3, 프레임 간 시간축 평균)
+    │     → 센서 노이즈 및 프레임 간 밝기 떨림 제거
+    │
+    │  ② 1D Spatial Smoothing (커널: {1,1,1,1,1}, 박스 필터)
+    │     → 단일 프레임 내 공간축 고주파 노이즈 제거
+    │
+    │  ③ 1차 미분 필터 (커널: {0,1,-1}, 차분 연산)
+    │     → 밝기 변화율 계산 → 흑백 경계 위치 특정
+    │
+    │  ④ Local Max/Min 검출 (양측 10개 샘플 비교)
+    │     → 미분 극값 → 원본 신호의 극값 위치 역산
+    │
+    │  ⑤ 거리 필터 (distFilter)
+    │     → 체커보드 격자 간격의 규칙성 기반 이상점 제거
+    │
+    │  ⑥ 값 필터 (valueFilter)
+    │     → 밝기 평균에서 ±5 이상 벗어나는 이상점 제거
+    ▼
+  정제된 Imax/Imin 후보 → MTF 계산
 ```
+
+#### ① Moving Average: 시간축 노이즈 제거
+
+```cpp
+// ProfileDetection.cpp
+std::vector<Moving_Average<float, 3>> m_average;  // 윈도우 크기 3
+
+for(int i = 0; i < m_average.size(); i++)
+{
+    m_average[i](data[i]);                // 새 값 입력 (stateful)
+    m_processData[i] = m_average[i].getValue();  // 이동 평균 출력
+}
+```
+
+`Moving_Average`는 **상태를 유지하는(stateful) 필터**로, IPC를 통해 매 프레임마다 들어오는 밝기값에 대해 **직전 3개 프레임의 시간적 평균**을 계산합니다. 이를 통해 센서 노이즈(shot noise)와 프레임 간 미세한 밝기 떨림(flicker)을 억제합니다.
+
+- **왜 Moving Average를 먼저?**: 카메라 센서에서 실시간으로 수신되는 데이터는 프레임마다 랜덤 노이즈가 다르므로, 시간축 평활화로 안정적인 기저 신호를 확보한 뒤 공간축 분석을 진행해야 극값 검출의 안정성이 높아집니다.
+
+#### ② Spatial Smoothing: 공간축 고주파 제거
+
+```cpp
+Filter1D(m_processData, {1, 1, 1, 1, 1});
+```
+
+커널 `{1,1,1,1,1}`은 **윈도우 크기 5의 박스 필터(Box Filter)**입니다. 양의 가중치 개수(5)로 나누어 정규화되므로, 주변 5개 픽셀의 단순 평균을 계산합니다. 이미 시간축으로 평활화된 신호에서 남아있는 **공간적 고주파 성분**(예: 체커보드 인쇄 결함, 조명 불균일)을 추가로 제거합니다.
+
+- **왜 2단계 스무딩?**: ①의 Moving Average는 **시간축**(frame-to-frame) 평균이고, ②의 Box Filter는 **공간축**(pixel-to-pixel) 평균입니다. 서로 독립된 축의 노이즈를 각각 처리하여, 한 번에 강한 필터를 걸었을 때 발생하는 신호 왜곡(edge blurring)을 방지합니다.
+
+#### ③ 1차 미분 필터: 밝기 변화율 계산
+
+```cpp
+std::vector<float> profile0 = m_processData;  // 스무딩된 원본 보존
+Filter1D(profile0, {0, 1, -1});               // 유한 차분 (finite difference)
+```
+
+커널 `{0, 1, -1}`은 `profile0[i] ≈ data[i] - data[i+1]`에 해당하는 **1차 유한 차분(finite difference)**입니다. 이 미분 신호에서:
+- **양의 큰 값**: 밝기가 급격히 **상승**하는 지점 (검정→흰색 전환, Imax 근처)
+- **음의 큰 값**: 밝기가 급격히 **하강**하는 지점 (흰색→검정 전환, Imin 근처)
+- **0 근처**: 밝기 변화 없음 (흰색/검정 영역 내부의 평탄 구간)
+
+- **왜 미분을 거치는가?**: 원본 밝기 신호에서 직접 극값을 찾으면 평탄 구간의 미세한 ripple까지 극값으로 오검출될 수 있습니다. 미분 신호의 극값은 **원본 신호에서 가장 급격한 전환이 일어나는 위치**만을 특정하므로, 진짜 흑백 경계만을 선별할 수 있습니다.
+
+#### ④ Local Max/Min 검출
+
+```cpp
+int detectSize = 10;  // 양측 10개 샘플 비교
+
+for (int i = 1 + detectSize; i < m_processData.size() - detectSize; i++)
+{
+    if(abs(profile0[i]) > 5)  // 미분값 절대치가 5 이상인 유의미한 변화만
+    {
+        // 미분 신호의 Local Maximum 검출
+        int localMaximumCnt = 0;
+        for(int j = 1; j < detectSize + 1; j++)
+        {
+            if(profile0[i-j] < profile0[i] && profile0[i+j] < profile0[i])
+                localMaximumCnt++;
+        }
+        if(localMaximumCnt >= detectSize)
+        {
+            // 미분 극대 → 원본 신호의 급상승 지점 → Imax 위치
+            // localOffset=3으로 미분→원본 위치 보정
+            veclocalMax.push_back(
+                cv::Point2f(i - localOffset, m_processData[i - localOffset]));
+        }
+        // (Local Minimum도 동일 방식으로 검출 → Imin 위치)
+    }
+}
+```
+
+미분 신호에서 **양측 10개 샘플 모두보다 큰 점**만을 Local Maximum으로 인정합니다. `detectSize=10`이라는 넓은 비교 윈도우는 체커보드 한 칸의 폭이 최소 수십 픽셀인 점을 고려한 값으로, 칸 내부의 미세한 ripple이 극값으로 오검출되는 것을 방지합니다.
+
+- **`localOffset=3` 위치 보정**: 미분 필터와 스무딩 필터의 지연(latency)을 보상하여, 검출된 극값 위치를 미분 신호 공간에서 원본 신호 공간으로 역산합니다.
+- **`abs(profile0[i]) > 5` 문턱값**: 미분값이 5 미만인 미미한 밝기 변화는 체커보드 경계가 아닌 노이즈로 판단하여 사전 필터링합니다.
+
+#### ⑤ 거리 필터 (distFilter): 격자 규칙성 기반 이상점 제거
+
+```cpp
+void ProfileDetection::distFilter(std::vector<cv::Point2f>& vecPt)
+{
+    // 인접 극값 간 평균 거리 계산
+    float diff = 0;
+    for(int i = 1; i < vecPt.size(); i++)
+        diff += abs(vecPt[i-1].x - vecPt[i].x);
+    diff /= vecPt.size() - 1;
+    diff *= 1.05;  // 5% 마진
+
+    // 평균 거리보다 현저히 먼 점 = 체커보드 격자 간격과 불일치 → 제거
+    for(int i = 1; i < vecPt.size(); i++)
+    {
+        if(abs(vecPt[i-1].x - vecPt[i].x) < diff)
+            vecFilter.push_back(vecPt[i]);
+    }
+}
+```
+
+체커보드의 흑백 경계는 **등간격**으로 배치되어 있으므로, 검출된 극값들 사이의 거리도 대체로 균일해야 합니다. 평균 간격의 1.05배를 초과하는 비정상적 간격의 점은 오검출로 판단하여 제거합니다. 이 필터는 반복적으로 적용되어(`max(size) * 0.5`회) 점진적으로 이상점을 걸러냅니다.
+
+#### ⑥ 값 필터 (valueFilter): 밝기 일관성 기반 이상점 제거
+
+```cpp
+void ProfileDetection::valueFilter(std::vector<cv::Point2f>& vecPt)
+{
+    float diff = 0;
+    for(int i = 0; i < vecPt.size(); i++)
+        diff += vecPt[i].y;
+    diff /= vecPt.size();  // 밝기 평균
+
+    // 평균에서 ±5 이상 벗어나는 점 제거
+    for(int i = 0; i < vecPt.size(); i++)
+    {
+        if(abs(vecPt[i].y - diff) < 5)
+            vecFilter.push_back(vecPt[i]);
+    }
+}
+```
+
+체커보드의 흰색 칸들은 모두 비슷한 밝기를 가져야 하고, 검정 칸들도 마찬가지입니다. Local Maximum들의 밝기값 평균에서 ±5 이상 벗어나는 점은 **조명 불균일이나 반사에 의한 이상값**으로 판단하여 제거합니다.
 
 ### UI 통합 (mainwindow.cpp)
 
@@ -182,7 +237,7 @@ profile1.FindLocalMaxMin(m_mtfProfile);
 
 ---
 
-## 2. Intrinsic Calibration 검증 - 3가지 방식 상세
+## 2. Intrinsic Calibration 검증 - Projection Error 시각화 구현
 
 > **기여도: Projection Error 방식 직접 구현 / 3가지 검증 방법 모두 사내 활용**
 
@@ -500,6 +555,82 @@ R = (-dSin + 1) * 127.5;   // -Sin 기반 (보색)
 | **표시 내용** | 재투영 오차 벡터 | 누적 코너 검출 위치 |
 | **평가 대상** | K, dist, R, t의 통합 정확도 | FOV 데이터 커버리지 균일성 |
 | **갱신 시점** | 매 캘리브레이션마다 | 매 보드 검출마다 누적 |
+
+---
+
+## 프로그램 전체 개요
+
+Intrinsic Calibration Tool은 카메라 내부 파라미터(K, distortion)를 추정하고 검증하는 Qt 기반 GUI 도구입니다.
+
+![Tool 전체 UI 구성](/assets/images/projects/intrinsic_tool/figma_design.png)
+*Tool UI 구성 설계 문서 - 카메라 모델 선택(Pinhole/Fisheye/OmniDir), 보드 타입(Chessboard/Circle/ChArUco), 5x5 그리드 기반 FOV 커버리지 맵, 캘리브레이션 결과 저장/최적화 기능*
+
+### 핵심 파이프라인
+
+```
+이미지 입력 (IPC 공유 메모리 / 파일)
+    → 2D Corner Detection (체커보드 코너 검출)
+    → 3D Object Point 대응 (Z=0 평면 격자)
+    → OpenCV Calibration (K, dist 초기 추정)
+    → Levenberg-Marquardt 비선형 최적화 (Eigen)
+    → 3D→2D Re-projection + 시각화
+    → Intrinsic 품질 검증 (3가지 방식)
+```
+
+### 지원 기능
+
+| 기능 | 설명 |
+|------|------|
+| 카메라 모델 | Pinhole, Fisheye, OmniDir (CMei) |
+| 보드 타입 | Chessboard, CirclesGrid, ChArUco |
+| 왜곡 모델 | k1~k3 / k1~k2 / k1~k6+s1~s4 (Rational) |
+| 실시간 연동 | IPC 공유 메모리로 로깅 툴과 실시간 스트리밍 |
+| 자동 데이터 선별 | 5x5 그리드 기반 FOV 균등 배치 |
+| LM 최적화 | Intrinsic + Extrinsic 동시 최적화 |
+
+![캘리브레이션 파라미터 패널](/assets/images/projects/intrinsic_tool/tool_ui_overview.png)
+*우측 패널: 보드/모델 선택, X/Y Pose Map, XY Error Map, Projection Error/FocalLength/FOV 정보 표시*
+
+---
+
+## 프로그램 주요 기능 스크린샷
+
+### 왜곡 격자(Distortion Grid) 시각화
+
+현재 추정된 K, distortion 파라미터로 가상 3D 격자를 투영하여, 렌즈 왜곡 패턴을 이미지 위에 **파란색 격자선**으로 표시합니다.
+
+![왜곡 격자 시각화](/assets/images/projects/intrinsic_tool/distortion_grid.png)
+*파란색 격자선이 이미지 위에 오버레이된 모습. 격자의 휨 정도가 렌즈 왜곡의 크기와 방향을 직관적으로 보여준다. 우측 5x5 그리드의 초록/빨강은 해당 영역의 데이터 취득 여부를 나타낸다.*
+
+### Intrinsic이 불안정할 때
+
+![불안정한 Intrinsic](/assets/images/projects/intrinsic_tool/unstable_intrinsic.png)
+*Intrinsic이 안정화되지 않았을 때의 모습. 파란색 격자선이 극도로 왜곡되어 이미지 전체를 뒤덮고 있다. 이 상태에서는 Optimizer 기능을 통해 누적 데이터 전체로 재캘리브레이션하여 개선할 수 있다.*
+
+### 이미지 전 영역 캘리브레이션 데이터 취득
+
+![전 영역 데이터 취득](/assets/images/projects/intrinsic_tool/full_fov_coverage.png)
+*detect area 체크 시 빨간색 영역으로 아직 데이터가 부족한 FOV 영역을 시각화. 이미지 전체 영역에 걸쳐 체커보드 데이터를 균등하게 확보해야 좋은 캘리브레이션 결과를 얻을 수 있다.*
+
+### 캘리브레이션 진행 중
+
+![최적화 진행 중](/assets/images/projects/intrinsic_tool/optimization_in_progress.png)
+*체커보드 코너 검출(무지개색 점) + 파란색 왜곡 격자 + 분홍색 Homography 잔차 원이 동시에 표시된 모습. 우측 5x5 그리드에서 초록색 영역은 데이터가 확보된 영역, 빨간색은 미확보 영역이다.*
+
+### 왜곡 보정 뷰 (Undistort View)
+
+![Undistort 뷰](/assets/images/projects/intrinsic_tool/undistort_view.png)
+*undistort view 체크 시 현재 K, dist로 왜곡을 보정한 이미지를 표시. 파란색 격자선이 직선으로 표시되면 왜곡 보정이 정상적으로 이루어지고 있음을 의미한다. 이미지 가장자리의 검은 영역은 왜곡 보정 과정에서 발생하는 자연스러운 현상이다.*
+
+### 실시간 라이다 투영
+
+![라이다 실시간 투영](/assets/images/projects/intrinsic_tool/lidar_realtime.png)
+*lidar projection 체크 시 IPC 공유 메모리로 수신한 라이다 포인트 클라우드를 현재 Extrinsic으로 이미지 위에 실시간 투영. 카메라-라이다 간 Extrinsic 정합 상태를 직관적으로 확인할 수 있다.*
+
+### 양호한 캘리브레이션 결과
+
+![양호한 캘리브레이션](/assets/images/projects/intrinsic_tool/calib_good_mtf.png)
+*캘리브레이션이 잘 된 상태의 전체 화면. 이미지 위에 파란색 왜곡 격자(자연스러운 곡선), 초록색 Re-projection 원(검출점과 일치), 분홍색 Homography 잔차(중앙 밀집), 녹색 MTF 프로파일 곡선이 동시에 표시된다. 우측 하단 INFO에서 ProjectionErr: 0.2 수준의 sub-pixel 정확도를 확인할 수 있다.*
 
 ---
 
