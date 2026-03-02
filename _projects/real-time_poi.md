@@ -30,8 +30,10 @@ order: 4
 ## 상세 업무 및 기여 (Responsibilities & Contributions)
 
 ### 1. 시스템 안정화 및 메모리 최적화
-- **문제 상황/목표**: 고부하 파이프라인(센서 수집 → AI 추론 → UI 렌더링 → 영상 저장)에서 빈번한 비트맵 생성/소멸로 GC(Garbage Collection) 오버헤드가 발생, 앱이 30분 이내에 강제 종료되는 치명적 결함 존재.
-- **해결 방안 (Action)**: AdvancedTaggedBitmapPool(60 Slots) 및 제로카피(Zero-copy) 기반의 HighSpeedZeroCopyProcessor를 직접 설계·구현하여 GC 부하를 원천 차단. YUV_420_888 → RGB 변환 최적화 및 FFmpeg 기반 영상 인코딩 로직 구축으로 CPU 점유율 절감.
+- **문제 상황/목표**: 고부하 파이프라인(센서 수집 → AI 추론 → UI 렌더링 → 영상 저장)에서 빈번한 비트맵 생성/소멸로 GC(Garbage Collection) 오버헤드가 발생하여 앱이 30분 이내에 강제 종료되는 치명적 결함이 존재. 또한 카메라 프레임 처리 지연 현상이 발생.
+- **해결 방안 (Action)**: 자체 구현한 `PerfettoManager.kt` 모듈을 통해 안드로이드 프로파일링 도구(**Perfetto 및 Method Tracing**)를 연동. `Trace.beginSection`과 `Debug.startMethodTracing`을 활용해 시스템 병목 구간을 정밀 분석.
+  1. **GC 부하 원천 차단**: 분석 결과 매 프레임 객체 생성/소멸이 원인임을 파악하여, 60개의 슬롯을 가진 원형 큐(Circular Queue) 기반의 `AdvancedTaggedBitmapPool`을 직접 설계해 메모리 재사용 구조 확립.
+  2. **YUV-RGB 변환 튜닝**: Camera2 API의 `YUV_420_888` 이미지 변환 과정에서 각 픽셀마다 발생하는 실수 연산(Floating-point)이 막대한 CPU를 점유하고 있음을 트레이스 데이터로 확인. 이를 정수 연산과 비트 시프트(`shr 8`)를 활용한 최적화 공식(ITU-R BT.601 기반)으로 튜닝하여 연산량 대폭 절감.
 - **결과 (Result)**: 차량 부착 테스트 시 3시간 이상 연속 가동 안정성 확보. 15fps 고정 프레임 스트리밍 유지.
 
 ### 2. AI 추론 시스템 및 적응형 제어
