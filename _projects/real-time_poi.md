@@ -10,7 +10,7 @@ thumbnail: "/assets/images/projects/real-time_poi/system_overview.png"
 order: 4
 ---
 
-## 📌 프로젝트 개요 (Overview)
+##  프로젝트 개요 (Overview)
 - **프로젝트명**: Real-time POI Detection Program - Mobile Version (모바일 POI 실시간 탐지 솔루션)
 - **기간**: 2025.01 ~ 2025.09
 - **역할**: Project Manager & Lead Developer (시스템 아키텍처 설계, 전체 파이프라인 구현, 성능 최적화 총괄)
