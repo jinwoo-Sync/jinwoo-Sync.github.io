@@ -38,3 +38,9 @@ order: 5
 [ 저가 센스 xsens mms 매핑 결과물 ]
 
 ![](/assets/images/projects/replica/mapping_result.png)
+
+### 공인 인증
+
+해당 시스템은 **Mobiltech Logging Suite(MLS)** 라는 제품명으로 **공인 GS(Good Software) 인증**을 획득하였습니다.
+
+![](/assets/images/projects/replica/공인_GS인증.png)
