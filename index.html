@@ -20,6 +20,22 @@ title: 홈
         <i class="bi bi-file-earmark-person"></i> CV
       </a>
     </div>
+
+    <div class="mt-5" data-aos="fade-up" data-aos-delay="500">
+      <!-- Include the library -->
+      <script src="https://unpkg.com/github-calendar@latest/dist/github-calendar.min.js"></script>
+      <!-- Include the theme CSS -->
+      <link rel="stylesheet" href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css" />
+      
+      <!-- Container for the graph -->
+      <div class="calendar bg-white text-dark rounded p-3">
+          Loading GitHub contributions...
+      </div>
+      
+      <script>
+          GitHubCalendar(".calendar", "jinwoo-Sync", { responsive: true });
+      </script>
+    </div>
   </div>
 </section>
 
