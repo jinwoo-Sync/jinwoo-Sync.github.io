@@ -9,27 +9,41 @@ company: "Mobiltech (Internal R&D)"
 order: 1
 ---
 
-## 주요 활동
+##  프로젝트 개요 (Overview)
+- **프로젝트명**: Calibration Program Optimization (사내 캘리브레이션 프로그램 자동화 고도화)
+- **기간**: 2022.06 ~ 2023.06
+- **역할**: Research Engineer (PnP 기반 자동 캘리브레이션 기능 설계 및 구현, 정량적/정성적 평가 체계 구축)
+- **기술 (Tech Stack)**: C++, OpenCV, PnP Algorithm
 
-- 이전 사내 버전: **수동/시각적 보정** 기반의 캘리브레이션 프로그램을 개발. 이는 사용자가 직접 파라미터를 조절하며 결과물의 시각적 정합성을 확인하는 방식이었음.
+기존 사내 캘리브레이션 프로그램이 수동/시각적 보정 방식에 의존하던 구조에서, PnP(Perspective-n-Point) 알고리즘을 활용한 자동화된 캘리브레이션 기능을 추가로 개발한 프로젝트.
 
-- 신규 개발한 업그레이드 버전: **PnP(Perspective-n-Point)** 알고리즘을 활용해 2D-3D 포인트 매칭 기반의 **자동화된 캘리브레이션** 기능을 추가. 최적화를 도입하여 사용자는 점과 직선을 잘만 만들어서 저장만 하면 동작되는 프로그램 구현.
+## 주요 성과 (Key Achievements)
+- 정면/후면 카메라 기준 RMS **1.xxx pixel 미만** 달성 (오차가 적은 공간)
+- Map 바닥면 기준 RMS **6 pixel 미만** 달성 (오차가 최대인 공간)
+- LiDAR-Camera, LiDAR-LiDAR, Radar-LiDAR, Camera-LiDAR-Radar, Map-Camera-LiDAR 등 **이종 센서 간 캘리브레이션 경험** 보유
+- 사내 정식 채택은 되지 않았으나, 컴퓨터 비전 및 캘리브레이션 기술에 대한 깊은 이해를 확보한 선행 연구 프로젝트
 
-- **성과:** 비록 사내 정식 채택은 되지 않았지만, 이 프로젝트를 통해 **컴퓨터 비전 및 캘리브레이션 기술에 대한 깊은 이해**를 가지게 됨.
+## 상세 업무 및 기여 (Responsibilities & Contributions)
 
-  - [ 오차가 적은 공간 ] 정면 카메라, 후면 카메라 기준 rms 1.xxx pixel 미만 도달.
+### 1. PnP 기반 자동 캘리브레이션 기능 개발
+- **문제 상황/목표**: 기존 사내 프로그램은 사용자가 직접 파라미터를 조절하며 결과물의 시각적 정합성을 확인하는 수동 보정 방식으로, 작업자 숙련도에 따라 결과 품질이 크게 좌우됨.
+- **해결 방안 (Action)**: PnP(Perspective-n-Point) 알고리즘을 활용해 2D-3D 포인트 매칭 기반의 자동화된 캘리브레이션 기능을 추가. 사용자가 점과 직선을 생성하여 저장만 하면 자동으로 최적화가 동작하는 프로그램으로 구현.
+- **결과 (Result)**: 정면/후면 카메라 기준 RMS 1.xxx pixel 미만, Map 바닥면 기준 RMS 6 pixel 미만 달성.
 
-  - [ 오차가 최대인 공간 ] map의 바닥면 rms 6pixel 미만 도달.
+### 2. 정량적/정성적 평가 체계 구축
+- **문제 상황/목표**: 정지 상태에서 LiDAR-Camera 캘리브레이션 정확도를 다각도로 평가할 수 있는 체계가 부재.
+- **해결 방안 (Action)**: 정량적 평가(RMS)와 정성적 평가(이미지 Projection) 외에, 3차원 공간에서의 시각적 정성적 평가 지표를 추가 구현하여 다각도 검증 체계 확립.
+- **결과 (Result)**: 캘리브레이션 결과의 품질을 정량/정성 양면에서 검증할 수 있는 평가 프레임워크 확보.
 
-- **정지 상태에서 라이다-카메라 캘리브레이션 정확도 평가 : 정량적 평가 ( rms ) 와 정성적 평가 ( 이미지 projection )이외의 3차원 시각적 정성적 평가 지표 구현.**
+### 3. 이종 센서 간 캘리브레이션 경험
+- **문제 상황/목표**: MMS 시스템에서 다양한 센서 조합의 캘리브레이션이 요구됨.
+- **해결 방안 (Action)**: LiDAR-Camera, LiDAR-LiDAR, Radar-LiDAR, Camera-LiDAR-Radar, Map-Camera-LiDAR 등 다양한 이종 센서 조합에 대해 캘리브레이션을 직접 수행.
+- **결과 (Result)**: 다양한 센서 조합에 대한 캘리브레이션 실무 경험 축적.
 
-- **lidar - lidar / radar - lidar / camera - lidar / camera - lidar -radar / map - camera - lidar 등 이종간 캘립 진행 경험 유**
+---
 
-## 프로젝트 결과물
+### 부록: 프로젝트 결과물
 
 ![](/assets/images/projects/calib_optimization/workflow.png)
-
-
-[ 결과물 ]
 
 ![](/assets/images/projects/calib_optimization/result2.png)

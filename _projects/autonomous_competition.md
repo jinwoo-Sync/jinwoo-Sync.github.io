@@ -10,32 +10,40 @@ thumbnail: /assets/images/projects/autonomous_competition/kcity_field.svg
 order: 7
 ---
 
-## 프로젝트 개요
+##  프로젝트 개요 (Overview)
+- **프로젝트명**: 국제 대학생 창작 자동차 경진대회 참가 (충북대학교 자율주행 팀)
+- **기간**: 2020.03 ~ 2021.10 (팀원 1년 + 팀장 1년)
+- **역할**: Team Member(1년) → Team Leader(1년) (차량 제어, 경로 계획, 센서 융합 전체 파이프라인 설계 및 구현)
+- **기술 (Tech Stack)**: C++, ROS, Camera, GPS/GNSS, LiDAR, IMU
 
-- 충북대학교 학부 자율주행 팀으로 **국제 대학생 창작 자동차 경진대회(2020~2021)**에 참가하여 차량 제어, 경로 계획, 센서 융합 전체 파이프라인을 자체 개발
-- ROS 기반 주행 소프트웨어를 구성하고, 카메라·LiDAR·GPS·IMU 데이터 융합으로 **센서-지도 정합 및 상태 추정 알고리즘** 구축
-- K-City 및 충북대학교 오창 캠퍼스 실도로 환경에서 주행 테스트를 수행하며, 학부 수준의 자율주행 전반을 아우르는 프레임워크를 직접 구축하고 검증함
-- 팀원 1년, 팀장 1년의 활동 기간 동안 기술 개발의 핵심 역할을 수행하며 프로젝트 전반의 아키텍처 설계와 구현에 장기간 기여함
+충북대학교 학부 자율주행 팀으로 국제 대학생 창작 자동차 경진대회(2020~2021)에 참가하여, ROS 기반 주행 소프트웨어를 구성하고 카메라·LiDAR·GPS·IMU 데이터 융합으로 센서-지도 정합 및 상태 추정 알고리즘을 구축. K-City 및 충북대학교 오창 캠퍼스 실도로 환경에서 주행 테스트를 수행.
 
-## 주요 역할 및 기여
+## 주요 성과 (Key Achievements)
+- 학부 수준에서 자율주행 전체 파이프라인(인지-판단-제어)을 자체 구축하고 실차 주행 검증 완료
+- 16개 가상 차선 후보 기반 Local Path Planning 알고리즘 설계 및 구현
+- Camera-LiDAR 캘리브레이션, 센서 융합, Kalman Filter 기반 Heading 보정 등 핵심 기술 직접 구현
+<!-- TODO: 대회 순위/수상 실적이 있다면 기입 -->
 
-- **자율주행 제어 안정화:** PID 제어기를 직접 구현하여 횡/종 방향 제어를 안정화하고, 응답성 개선을 위한 파라미터 튜닝을 반복적으로 수행
-- **Global + Local Path Planning:** GPS 기반 global path를 작성하고 cost map을 이용한 local path planning을 추가하여 동적 장애물 회피 시나리오를 처리
-- **센서 캘리브레이션 & 융합:** 미션 구역 인식 및 구역 내 정밀 제어를 위해 Camera-LiDAR 캘리브레이션과 센서 융합을 수행. GPS 초기 좌표 기반의 Global Pose에서 IMU의 Heading 값을 보정하기 위한 단순 칼만 필터(Kalman Filter)를 구현하여 주행 방향의 정밀도를 확보함
+## 상세 업무 및 기여 (Responsibilities & Contributions)
 
-## Local Path Planning 세부 구조
+### 1. 자율주행 제어 안정화
+- **문제 상황/목표**: 실차 환경에서 안정적인 횡/종 방향 차량 제어가 필요.
+- **해결 방안 (Action)**: PID 제어기를 직접 구현하여 횡/종 방향 제어를 안정화하고, 응답성 개선을 위한 파라미터 튜닝을 반복적으로 수행.
+- **결과 (Result)**: 실도로 환경에서 안정적인 차량 제어 달성.
 
-1. **Calibration 기반 Cost Map 생성**  
-   - 실시간 Camera-LiDAR 캘리브레이션 값을 활용해 LiDAR 점군을 이미지 평면에 투영하고 전방 장애물 후보를 추출
-2. **장애물 경계 지점 선정**  
-   - 차량 진행 벡터 기준으로 장애물 양쪽에 4개의 기준점을 생성하여 정사면체 형태의 안전 구역(사이드 존)을 정의
-3. **16개 Lane 후보 생성**  
-   - Global path와 현재 장애물 위치, 미션 포인트를 모두 알고 있는 상태에서 16개의 가상 차선을 생성하고, cost map 상의 이동 벡터와 가장 가까운 차선을 선택
-4. **Local Path 재생성 & 전환**  
-   - 선택된 차선을 따라 local path를 즉시 재구성하고, 차량의 Pose와 속도 조건을 만족할 경우 안전하게 차선 변경을 수행
+### 2. Global + Local Path Planning 구현
+- **문제 상황/목표**: GPS 기반 Global Path만으로는 동적 장애물 회피가 불가능하여 Local Path Planning이 필요.
+- **해결 방안 (Action)**: GPS 기반 Global Path를 작성하고, Camera-LiDAR 캘리브레이션 값을 활용해 LiDAR 점군을 이미지 평면에 투영하여 전방 장애물 후보를 추출하는 Cost Map 생성. 장애물 양쪽에 4개 기준점을 정의한 뒤 16개 가상 차선을 생성하고, Cost Map 상의 이동 벡터와 가장 가까운 차선을 선택하여 Local Path를 재구성하는 알고리즘 설계.
+- **결과 (Result)**: 동적 장애물 회피 시나리오에서 안전한 차선 변경 및 경로 재생성 동작 구현.
 
-## Photos & Evidence
+### 3. 센서 캘리브레이션 및 융합
+- **문제 상황/목표**: 미션 구역 인식 및 정밀 제어를 위해 다중 센서 데이터의 정합이 필요하며, GPS 기반 Heading 값의 노이즈가 주행 정밀도를 저하시키는 문제 존재.
+- **해결 방안 (Action)**: Camera-LiDAR 캘리브레이션과 센서 융합을 수행. GPS 초기 좌표 기반의 Global Pose에서 IMU Heading 값을 보정하기 위한 단순 Kalman Filter를 구현하여 주행 방향 정밀도 확보.
+- **결과 (Result)**: 다중 센서 융합 기반의 안정적인 상태 추정 달성.
 
+---
+
+### 부록: 프로젝트 결과물
 
 ![Local Path Planning Flow](/assets/images/projects/autonomous_competition/path_planning.png)
 
