@@ -20,10 +20,11 @@ order: 5
 ## 주요 성과 (Key Achievements)
 - 신규 머신비전 카메라(Hikvision, MIPI, GMSL) 인터페이스 추가 및 시스템 안정화 성공
 - x86 기반 시스템에서 ARM(NVIDIA Orin) 보드로의 시스템 확장 및 이식 주도
-- **확장형 IPC 구조 설계 기여**를 통한 전사 툴 체인(Calibration, Mapping) 연동 실현
+- 핵심 메인 개발자로서 프로그램 전반의 신규 센서 인터페이스 개발, 시스템 이식 및 데이터 로깅 로직 등 전방위적 기능 개발 주도
 - Mobiltech Logging Suite(MLS) **공인 GS(Good Software) 인증 획득** 기여
 
 ## 상세 업무 및 기여 (Responsibilities & Contributions)
+프로그램의 핵심 메인 개발자로서 데이터 수집부터 제어, 시스템 통합까지 전 과정의 기능 고도화를 주도하며 다음과 같은 업무를 수행했습니다.
 
 ### 1. 신규 카메라 인터페이스 개발 및 MMS 특화 데이터(DMI) 확보
 - **문제 상황/목표**: 고정밀 매핑을 위한 신규 센서(Hik, E-con MIPI, E-con GMSL) 연동 및 기존 시스템에서 부재했던 **정밀 거리/시간 정보(DMI)의 로깅 필요**.
@@ -55,6 +56,9 @@ order: 5
 
 ![](/assets/images/projects/replica/mapping_result.png)
 *저가 센서 xsens 기반 MMS 매핑 결과물*
+
+![](/assets/images/projects/replica/trigger_view.png)
+*하드웨어 트리거 제어 모듈 뷰*
 
 **공인 인증**
 
