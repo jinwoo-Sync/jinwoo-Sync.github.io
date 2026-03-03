@@ -18,8 +18,8 @@ order: 1
 ##  주요 성과 (Key Achievements)
 - 데이터 처리 시간 36시간 → 약 1시간으로 단축 (69GB 원본 데이터 기준 약 36배 성능 개선)
 - 연구팀의 Python 기반 고복잡도 로직을 상용 배포용 C# 네이티브 코드로 독자 재구현하여 서비스 가용성 및 배포 안정성 확보
-- 양 팀(연구/개발) 간의 성능 및 속도 Trade-off 정밀 검증을 통해 최적화된 엔진을 상용 파이프라인에 최종 반영
-- 사우디/두바이 이외의 신규 해외 사업(인도네시아) 확장 및 기술 솔루션 현지화 성공
+- 양 팀(연구/개발) 간의 성능 및 속도 Trade-off 정밀 검증과 기술적 간극 해소를 통해 최적화된 엔진을 상용 파이프라인에 최종 반영
+- **COPC 마샬링 및 실시간 가시화** 구현으로 대용량 점군 데이터 기반 모델링(LOD2) 정밀 검증 환경 구축
 
 ##  상세 업무 및 기여 (Responsibilities & Contributions)
 
@@ -36,35 +36,46 @@ order: 1
 ![SHP 중복 영역 감지 및 정리]({{ '/assets/images/projects/indonesia_gis/shp_overlap_detection.png' | relative_url }})
 *GIS 툴에서 중복 영역이 빨간색으로 표시된 모습*
 
-### 3. 상용 배포를 위한 고속 DTM(지형 모델) 엔진 독자 구현 및 검증
-- **문제 상황/목표**: 기존 연구팀의 Python 기반 로직(PDAL CSF)은 69GB 지면 필터링에 약 36시간이 소요되었으며, 연구용 환경에 강하게 커플링되어 있어 단일 실행 파일 형태의 상용 툴 배포에 한계가 있음.
-- **해결 방안 (Action)**: 상용 배포 가용성을 확보하기 위해 핵심 로직을 C# 네이티브 코드로 독자 재설계. 개발 과정에서 Python 기반 원본 로직과 C# 구현체 간의 **정밀 성능 비교 및 속도 Trade-off 분석**을 수행하여, 상용 서비스에 최적화된 알고리즘(Voxel 기반 멀티스레드 병렬 처리)을 확정.
-- **결과 (Result)**: 69GB 데이터 처리 시간을 1시간 이내로 단축함과 동시에, 외부 라이브러리 의존성을 최소화하여 '빌드 및 배포가 용이한 상용 수준의 엔진'을 완성. 해당 DTM은 후속 공정인 '.obj 메쉬 모델 자동 생성'의 핵심 베이스 데이터로 활용 중.
+### 3. 고속 DTM 생성 엔진 및 실시간 점군 가시화/검증 파이프라인 통합
+- **문제 상황/목표**: 기존 연구팀의 Python 기반 로직(PDAL CSF)의 성능 한계(69GB 처리 시 36시간 소요)와 자동 생성된 모델링(LOD2 등)을 원본 점군과 즉각 비교할 수 있는 실시간 검증 환경 부재.
+- **해결 방안 (Action)**: 상용 배포 가용성을 위해 핵심 로직을 C# 네이티브 코드로 독자 재설계하고, C++ 기반 COPC 라이브러리를 **C# 마샬링(Marshalling)**으로 통합. Python 원본 로직과의 **정밀 성능 비교 및 Trade-off 분석**을 통해 최적화된 엔진 및 실시간 계층적 시각화 로직 확정.
+- **결과 (Result)**: 데이터 처리 시간을 1시간 이내로 단축함과 동시에, 기가바이트 단위의 대규모 데이터셋에서도 실시간 점군 로드 및 모델링 정밀도 검증(천장 LOD2 등)이 가능한 상용 수준의 통합 엔진 완성.
+
+<div style="display: flex; gap: 20px; align-items: flex-start; margin-bottom: 20px;">
+  <div style="flex: 1.2;">
 
 ```mermaid
 graph TD
-    Raw["Raw Point Cloud"] --> Step1["<b>Step 1: 지면 필터링 (Ground Filtering)</b><br/>Voxel 기반 높이 분포 분석 및 Block 단위 평면성 필터링"]
-    Step1 --> Step2["<b>Step 2: 초기 그리드 생성 (Grid Generation)</b><br/>CPU 코어별 로컬 그리드 독립 연산 및 병합 (MinZ 시드 할당)"]
-    Step2 --> Step3["<b>Step 3: Voxel 기반 구멍 메우기 (Hole Filling)</b><br/>대형 Voxel 참조 기반 지형 전파 및 O(N) 고속 보간"]
-    Step3 --> Step4["<b>Step 4: 스무딩 및 데이터 출력</b><br/>인접 셀 가중 평균 스무딩 및 32-bit GeoTiff 생성"]
-    Step4 --> FinalDTM["<b>최종 고정밀 DTM</b>"]
+    Raw["Raw Point Cloud"] --> Step1["<b>Step 1: 지면 필터링</b><br/>Voxel 기반 높이 분석 및 Block 단위 평면성 필터링"]
+    Step1 --> Step2["<b>Step 2: 초기 그리드 생성</b><br/>CPU 코어별 로컬 그리드 독립 연산 및 병합"]
+    Step2 --> Step3["<b>Step 3: Voxel 기반 구멍 메우기</b><br/>대형 Voxel 참조 기반 지형 전파 및 O(N) 고속 보간"]
+    Step3 --> Step4["<b>Step 4: 스무딩 및 데이터 출력</b><br/>가중 평균 스무딩 및 32-bit GeoTiff 생성"]
+    Step4 --> FinalDTM["<b>최종 고정밀 DTM 및 시각화 검증</b>"]
 
-    style Step1 fill:#f9f,stroke:#333,stroke-width:2px
-    style Step2 fill:#bbf,stroke:#333,stroke-width:2px
-    style Step3 fill:#bfb,stroke:#333,stroke-width:2px
-    style Step4 fill:#fbb,stroke:#333,stroke-width:2px
-    style FinalDTM fill:#fff,stroke:#333,stroke-width:4px
+    style Step1 fill:#f9f,stroke:#333,stroke-width:1px
+    style Step2 fill:#bbf,stroke:#333,stroke-width:1px
+    style Step3 fill:#bfb,stroke:#333,stroke-width:1px
+    style Step4 fill:#fbb,stroke:#333,stroke-width:1px
+    style FinalDTM fill:#fff,stroke:#333,stroke-width:2px
 ```
 
-![지면 추출 알고리즘]({{ '/assets/images/projects/indonesia_gis/ground_extraction_algorithm.png' | relative_url }})
-*Voxel 기반 높이 분석 및 Block 단위 평면 필터링 과정*
+  </div>
+  <div style="flex: 0.8; text-align: center;">
+    <img src="/assets/images/projects/indonesia_gis/ground_extraction_algorithm.png" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    <p style="font-size: 0.8em; color: #666; margin-top: 8px;"><i>Voxel 기반 높이 분석 및 평면 필터링 과정</i></p>
+  </div>
+</div>
 
-| PDAL CSF 방식 | C# 커스텀 알고리즘 |
-|:---:|:---:|
-| ![PDAL CSF DTM]({{ '/assets/images/projects/indonesia_gis/dtm_pdal_csf.png' | relative_url }}) | ![C# DTM]({{ '/assets/images/projects/indonesia_gis/dtm_csharp.png' | relative_url }}) |
-
-![지면 추출 결과]({{ '/assets/images/projects/indonesia_gis/ground_surface_detail.png' | relative_url }})
-*DTM 생성 전 최종 바닥면 추출 결과*
+<div style="display: flex; gap: 20px; align-items: flex-start; margin-bottom: 20px;">
+  <div style="flex: 1; text-align: center;">
+    <img src="/assets/images/projects/indonesia_gis/dtm_csharp.png" style="width: 100%; border-radius: 4px;">
+    <p style="font-size: 0.8em; color: #666; margin-top: 8px;"><i>C# 커스텀 고속 알고리즘 결과</i></p>
+  </div>
+  <div style="flex: 1; text-align: center;">
+    <img src="/assets/images/projects/indonesia_gis/ground_surface_detail.png" style="width: 100%; border-radius: 4px;">
+    <p style="font-size: 0.8em; color: #666; margin-top: 8px;"><i>DTM 생성 전 최종 지면 추출 디테일</i></p>
+  </div>
+</div>
 
 ---
 
