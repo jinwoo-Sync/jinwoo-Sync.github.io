@@ -3,7 +3,7 @@ layout: project
 title: "Real-time POI Detection Program - Mobile Version"
 period: "2025.01 ~ 2025.09"
 category: "Mobile Application & AI"
-tech: "Kotlin, Coroutines, YOLOv8(TFLite), Camera2 API, GNSS Raw, FFmpeg"
+tech: "Kotlin, YOLOv8(TFLite), FFmpeg"
 role: "Project Manager & Lead Developer"
 company: "Mobiltech (Internal R&D)"
 thumbnail: "/assets/images/projects/real-time_poi/system_overview.png"
@@ -14,7 +14,7 @@ order: 4
 - **프로젝트명**: Real-time POI Detection Program - Mobile Version (모바일 POI 실시간 탐지 솔루션)
 - **기간**: 2025.01 ~ 2025.09
 - **역할**: Project Manager & Lead Developer (시스템 아키텍처 설계, 전체 파이프라인 구현, 성능 최적화 총괄)
-- **기술 (Tech Stack)**: Kotlin, Coroutines, YOLOv8(TFLite), Camera2 API, GNSS Raw, FFmpeg
+- **기술 (Tech Stack)**: Kotlin, YOLOv8(TFLite), FFmpeg
 
 산업용 카메라, LiDAR, Jetson AGX 기반의 고가 하드웨어 구성을 범용 스마트폰 단일 기기(Samsung Galaxy S20 Ultra & S21 Ultra)로 대체하여 운영 비용을 절감하는 모바일 POI 탐지 솔루션. 두 가지 전략적 목표를 위해 수행되었다.
 
