@@ -37,16 +37,13 @@ order: 1
 *GIS 툴에서 중복 영역이 빨간색으로 표시된 모습*
 
 ### 3. 고속 DTM 생성 엔진 및 실시간 점군 가시화/검증 파이프라인 통합
-- **문제 상황/목표**: 기존 연구팀의 Python 기반 로직(PDAL CSF)의 성능 한계(69GB 처리 시 36시간 소요)와 자동 생성된 모델링(LOD2 등)을 원본 점군과 즉각 비교할 수 있는 실시간 검증 환경 부재.
-- **해결 방안 (Action)**: 상용 배포 가용성을 위해 핵심 로직을 C# 네이티브 코드로 독자 재설계하고, C++ 기반 COPC 라이브러리를 **C# 마샬링(Marshalling)**으로 통합. Python 원본 로직과의 **정밀 성능 비교 및 Trade-off 분석**을 통해 최적화된 엔진 및 실시간 계층적 시각화 로직 확정.
-- **결과 (Result)**: 데이터 처리 시간을 1시간 이내로 단축함과 동시에, 기가바이트 단위의 대규모 데이터셋에서도 실시간 점군 로드 및 모델링 정밀도 검증(천장 LOD2 등)이 가능한 상용 수준의 통합 엔진 완성.
-
-<div style="display: flex; gap: 20px; align-items: flex-start; margin-bottom: 20px;">
-  <div style="flex: 1.2;">
+- **문제 상황/목표**: 기존 연구팀의 Python 기반 로직(PDAL CSF)의 성능 한계(36시간 소요)와 연구 환경에 편중된 코드 구조로 인한 상용 배포의 어려움. 또한, 자동 생성된 모델링(LOD2)을 실시간으로 검증할 수 있는 환경 부재.
+- **해결 방안 (Action)**: 상용 배포 가용성을 위해 핵심 로직을 C# 네이티브 코드로 독자 재설계하고, C++ 기반 COPC 라이브러리를 **C# 마샬링**으로 통합. 연구팀과 개발팀 사이에서 **정밀 성능 비교 및 속도 Trade-off 분석**을 주도하여 양 팀의 기술적 간극을 해소하고 최적화된 엔진 확정.
+- **결과 (Result)**: 데이터 처리 시간을 1시간 이내로 단축함과 동시에, 기가바이트 단위의 데이터셋에서도 실시간 점군 로드 및 모델링 정밀도 검증이 가능한 상용 통합 엔진 완성.
 
 ```mermaid
 graph TD
-    Raw["Raw Point Cloud"] --> Step1["<b>Step 1: 지면 필터링</b><br/>Voxel 기반 높이 분석 및 Block 단위 평면성 필터링"]
+    Raw["Raw Point Cloud"] --> Step1["<b>Step 1: 지면 필터링</b><br/>Voxel 기반 높이 분석 및 평면성 필터링"]
     Step1 --> Step2["<b>Step 2: 초기 그리드 생성</b><br/>CPU 코어별 로컬 그리드 독립 연산 및 병합"]
     Step2 --> Step3["<b>Step 3: Voxel 기반 구멍 메우기</b><br/>대형 Voxel 참조 기반 지형 전파 및 O(N) 고속 보간"]
     Step3 --> Step4["<b>Step 4: 스무딩 및 데이터 출력</b><br/>가중 평균 스무딩 및 32-bit GeoTiff 생성"]
@@ -59,21 +56,18 @@ graph TD
     style FinalDTM fill:#fff,stroke:#333,stroke-width:2px
 ```
 
-  </div>
-  <div style="flex: 0.8; text-align: center;">
-    <img src="/assets/images/projects/indonesia_gis/ground_extraction_algorithm.png" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-    <p style="font-size: 0.8em; color: #666; margin-top: 8px;"><i>Voxel 기반 높이 분석 및 평면 필터링 과정</i></p>
-  </div>
-</div>
-
-<div style="display: flex; gap: 20px; align-items: flex-start; margin-bottom: 20px;">
+<div style="display: flex; gap: 10px; justify-content: space-between; margin-top: 20px;">
   <div style="flex: 1; text-align: center;">
-    <img src="/assets/images/projects/indonesia_gis/dtm_csharp.png" style="width: 100%; border-radius: 4px;">
-    <p style="font-size: 0.8em; color: #666; margin-top: 8px;"><i>C# 커스텀 고속 알고리즘 결과</i></p>
+    <img src="/assets/images/projects/indonesia_gis/ground_extraction_algorithm.png" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <p style="font-size: 0.75em; color: #666; margin-top: 5px;"><i>Voxel 필터링 과정</i></p>
   </div>
   <div style="flex: 1; text-align: center;">
-    <img src="/assets/images/projects/indonesia_gis/ground_surface_detail.png" style="width: 100%; border-radius: 4px;">
-    <p style="font-size: 0.8em; color: #666; margin-top: 8px;"><i>DTM 생성 전 최종 지면 추출 디테일</i></p>
+    <img src="/assets/images/projects/indonesia_gis/dtm_csharp.png" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <p style="font-size: 0.75em; color: #666; margin-top: 5px;"><i>C# 엔진 생성 결과</i></p>
+  </div>
+  <div style="flex: 1; text-align: center;">
+    <img src="/assets/images/projects/indonesia_gis/ground_surface_detail.png" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <p style="font-size: 0.75em; color: #666; margin-top: 5px;"><i>최종 지면 추출 디테일</i></p>
   </div>
 </div>
 
