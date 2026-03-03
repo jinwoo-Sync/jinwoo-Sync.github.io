@@ -3,7 +3,7 @@ layout: project
 title: "대규모 도시급 항공 GIS 상용 툴 개발"
 period: "2025.07 ~ Present"
 category: "GIS & Data Pipeline"
-tech: "C#, Python, PDAL, GDAL, SAM, EfficientNet, Nuitka"
+tech: "C#(.NET), Python, PyTorch, C++ Interop(Marshalling), WPF, PDAL, GDAL, SAM3, Nuitka"
 role: "Team Member"
 company: "Mobiltech (Indonesia Project)"
 order: 1
@@ -13,7 +13,7 @@ order: 1
 - **프로젝트명**: 대규모 도시급 항공 GIS 상용 툴 개발 (Indonesia Project)
 - **기간**: 2025.07 ~ Present
 - **역할**: Team Member (C# 파이프라인 설계 및 최적화, 딥러닝 모듈 통합)
-- **기술 (Tech Stack)**: C#, Python, PDAL, GDAL, SAM, EfficientNet, Nuitka
+- **기술 (Tech Stack)**: C#(.NET), Python, PyTorch, C++ Interop(Marshalling), WPF, PDAL, GDAL, SAM3, Nuitka
 
 ##  주요 성과 (Key Achievements)
 - 데이터 처리 시간 36시간 → 약 17시간으로 단축 (70MB/min 처리 속도 기준 약 2.1배 성능 개선)
