@@ -6,24 +6,35 @@ title: CV
 @media print {
   @page {
     size: A4;
-    margin: 12mm 10mm;
+    margin: 10mm 12mm;
   }
-  body {
+  html, body {
     font-size: 11px !important;
-  }
-  .container {
-    max-width: 100% !important;
     width: 100% !important;
-    padding: 0 !important;
     margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
   }
-  nav, footer {
+  nav, footer, .navbar, .site-footer {
     display: none !important;
   }
+  .container, .container-fluid, .container-lg, .container-xl {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
   .badge {
-    border: 1px solid #000;
+    border: 1px solid #000 !important;
     color: #000 !important;
     background: none !important;
+    -webkit-print-color-adjust: exact;
+  }
+  a {
+    color: #000 !important;
+    text-decoration: none !important;
   }
 }
 </style>
