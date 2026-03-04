@@ -2,6 +2,7 @@
 layout: post
 title: "제약조건 하의 직사각형 위치 최적화 — 수학적 이론과 구현"
 tags: [Optimization, Math, C++, Levenberg-Marquardt, Newton-Raphson]
+published: false
 ---
 
 내부 직사각형이 외부 직사각형의 경계를 침범하지 않도록 위치와 방향을 최적화하는 **제약 최적화 문제(Constrained Optimization Problem)**의 수학적 이론과 구현을 다룬다.
