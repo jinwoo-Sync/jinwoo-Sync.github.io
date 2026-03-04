@@ -3,7 +3,7 @@ layout: project
 title: "대규모 도시급 항공 GIS 상용 툴 개발"
 period: "2025.07 ~ Present"
 category: "GIS & Data Pipeline"
-tech: "C#(.NET), Python, PyTorch, C++ Interop(Marshalling), WPF, PDAL, GDAL, SAM3, Nuitka"
+tech: "C#(.NET), Python, PyTorch, C++ Interop(Marshalling), WPF, PDAL, GDAL, SAM3, PyInstaller, Cython"
 role: "Team Member"
 company: "Mobiltech (Indonesia Project)"
 order: 1
@@ -13,7 +13,7 @@ order: 1
 - **프로젝트명**: 대규모 도시급 항공 GIS 상용 툴 개발 (Indonesia Project)
 - **기간**: 2025.07 ~ Present
 - **역할**: Team Member (C# 파이프라인 설계 및 최적화, 딥러닝 모듈 통합)
-- **기술 (Tech Stack)**: C#(.NET), Python, PyTorch, C++ Interop(Marshalling), WPF, PDAL, GDAL, SAM3, Nuitka
+- **기술 (Tech Stack)**: C#(.NET), Python, PyTorch, C++ Interop(Marshalling), WPF, PDAL, GDAL, SAM3, PyInstaller, Cython
 
 ##  주요 성과 (Key Achievements)
 - 데이터 처리 시간 36시간 → 약 17시간으로 단축 (70MB/min 처리 속도 기준 약 2.1배 성능 개선)
@@ -26,7 +26,7 @@ order: 1
 ### 1. 하이브리드 아키텍처 기반의 통합 GIS 프로그램 설계
 - **문제 상황/목표**: 딥러닝 연구팀에서 개별적으로 작성된 Python 스크립트들을 현지 사용자가 쉽게 조작할 수 있는 단일 프로그램으로 묶어야 함.
 - **해결 방안 (Action)**: Python 환경을 C# 응용 프로그램 내부에서 제어하고 통신할 수 있는 하이브리드 아키텍처를 설계하여 파이프라인 일원화.
-- **결과 (Result)**: 13종 이상의 Python/PyTorch 워크로드를 Nuitka(바이너리 컴파일)와 UV 환경을 통해 안전하고 독립적으로 실행되는 단일 소프트웨어 패키지로 배포 성공.
+- **결과 (Result)**: 13종 이상의 Python/PyTorch 워크로드를 PyInstaller·Cython 기반 .exe 및 UV 가상환경을 통해 C# 상용툴 내에서 안전하고 독립적으로 실행되는 단일 소프트웨어 패키지로 배포 성공.
 
 ### 2. 항공 데이터 기반 SHP 자동 병합 로직 개발
 - **문제 상황/목표**: 다중 TIF 이미지에서 건물을 추출하고 병합할 때, 항공 이미지 간 겹치는 영역이 발생하여 SHP 파일에 중복 데이터가 쌓임.
