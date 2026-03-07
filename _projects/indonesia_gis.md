@@ -43,8 +43,6 @@ order: 1
 - **해결 방안 (Action)**: 핵심 DTM 로직을 C# 네이티브로 독자 재설계하고, C++ 기반 [COPC 라이브러리](https://github.com/RockRobotic/copc-lib)를 **직접 C# 마샬링**으로 통합. 원본 .las를 공간 정렬된 .laz로 변환 후 Bounding Box 입력 시 해당 영역만 실시간 스트리밍 로드. 연구팀↔개발팀 간 **정밀 성능 비교 및 Trade-off 분석**을 주도하여 최적화된 엔진 확정.
 - **결과 (Result)**: 69GB 처리 시간 36시간 → 약 17시간 단축(70MB/min). 기가바이트 단위 데이터셋에서 Bounding Box 기반 실시간 점군 로드 및 LOD2 정밀 검증 가능한 상용 통합 엔진 완성.
 
-<div style="width: 50%; margin: 20px auto;">
-
 ```mermaid
 graph TD
     Raw["Raw Point Cloud"] --> Step1["<b>Step 1: 지면 필터링</b><br/>Voxel 기반 높이 분석 및 평면성 필터링"]
@@ -59,8 +57,6 @@ graph TD
     style Step4 fill:#fbb,stroke:#333,stroke-width:1px
     style FinalDTM fill:#fff,stroke:#333,stroke-width:2px
 ```
-
-</div>
 
 <div style="display: flex; gap: 10px; justify-content: space-between; margin-top: 20px;">
   <div style="flex: 1; text-align: center;">
