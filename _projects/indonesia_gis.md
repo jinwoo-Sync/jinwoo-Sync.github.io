@@ -43,20 +43,6 @@ order: 1
 - **해결 방안 (Action)**: 핵심 DTM 로직을 C# 네이티브로 독자 재설계하고, C++ 기반 [COPC 라이브러리](https://github.com/RockRobotic/copc-lib)를 **직접 C# 마샬링**으로 통합. 원본 .las를 공간 정렬된 .laz로 변환 후 Bounding Box 입력 시 해당 영역만 실시간 스트리밍 로드. 연구팀↔개발팀 간 **정밀 성능 비교 및 Trade-off 분석**을 주도하여 최적화된 엔진 확정.
 - **결과 (Result)**: 69GB 처리 시간 36시간 → 약 17시간 단축(70MB/min). 기가바이트 단위 데이터셋에서 Bounding Box 기반 실시간 점군 로드 및 정밀 검증 가능한 상용 통합 엔진 완성.
 
-<div class="mermaid" style="width: 50%; margin: 20px auto;">
-graph TD
-    Raw["Raw Point Cloud"] --> Step1["Step 1: 지면 필터링\nVoxel 기반 높이 분석 및 평면성 필터링"]
-    Step1 --> Step2["Step 2: 초기 그리드 생성\nCPU 코어별 로컬 그리드 독립 연산 및 병합"]
-    Step2 --> Step3["Step 3: Voxel 기반 구멍 메우기\n대형 Voxel 참조 기반 지형 전파 및 O(N) 고속 보간"]
-    Step3 --> Step4["Step 4: 스무딩 및 데이터 출력\n가중 평균 스무딩 및 32-bit GeoTiff 생성"]
-    Step4 --> FinalDTM["최종 고정밀 DTM 및 시각화 검증"]
-    style Step1 fill:#f9f,stroke:#333,stroke-width:1px
-    style Step2 fill:#bbf,stroke:#333,stroke-width:1px
-    style Step3 fill:#bfb,stroke:#333,stroke-width:1px
-    style Step4 fill:#fbb,stroke:#333,stroke-width:1px
-    style FinalDTM fill:#fff,stroke:#333,stroke-width:2px
-</div>
-
 <div style="display: flex; gap: 10px; justify-content: space-between; margin-top: 20px;">
   <div style="flex: 1; text-align: center;">
     <img src="/assets/images/projects/indonesia_gis/ground_extraction_algorithm.png" style="width: 50%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
