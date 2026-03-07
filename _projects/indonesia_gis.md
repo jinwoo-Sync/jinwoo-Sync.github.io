@@ -33,8 +33,10 @@ order: 1
 - **해결 방안 (Action)**: TIF → PNG 변환 후, Airborne 데이터와 Global Building, OSM 데이터를 결합하는 단계에서 공간 좌표 기반의 중복 영역 자동 감지 및 병합 알고리즘 구현.
 - **결과 (Result)**: 중복 면적이 완벽히 제거된 깔끔한 SHP 결과물 생성 파이프라인 확립.
 
-![SHP 중복 영역 감지 및 정리]({{ '/assets/images/projects/indonesia_gis/shp_overlap_detection.png' | relative_url }})
-*GIS 툴에서 중복 영역이 빨간색으로 표시된 모습*
+<div style="text-align: center; margin: 16px 0;">
+  <img src="{{ '/assets/images/projects/indonesia_gis/shp_overlap_detection.png' | relative_url }}" style="width: 50%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+  <p style="font-size: 0.8em; color: #666; margin-top: 5px;"><i>GIS 툴에서 중복 영역이 빨간색으로 표시된 모습</i></p>
+</div>
 
 ### 3. 고속 DTM 생성 엔진 및 실시간 점군 가시화/검증 파이프라인 통합
 - **문제 상황/목표**: 기존 연구팀의 Python 기반 로직(PDAL CSF)의 성능 한계(36시간 소요)와 연구 환경에 편중된 코드 구조로 인한 상용 배포의 어려움. 또한, 자동 생성된 모델링(LOD2)을 실시간으로 검증할 수 있는 환경 부재.
@@ -58,17 +60,33 @@ graph TD
 
 <div style="display: flex; gap: 10px; justify-content: space-between; margin-top: 20px;">
   <div style="flex: 1; text-align: center;">
-    <img src="/assets/images/projects/indonesia_gis/ground_extraction_algorithm.png" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <img src="/assets/images/projects/indonesia_gis/ground_extraction_algorithm.png" style="width: 50%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
     <p style="font-size: 0.75em; color: #666; margin-top: 5px;"><i>Voxel 필터링 과정</i></p>
   </div>
   <div style="flex: 1; text-align: center;">
-    <img src="/assets/images/projects/indonesia_gis/dtm_csharp.png" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <img src="/assets/images/projects/indonesia_gis/dtm_csharp.png" style="width: 50%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
     <p style="font-size: 0.75em; color: #666; margin-top: 5px;"><i>C# 엔진 생성 결과</i></p>
   </div>
   <div style="flex: 1; text-align: center;">
-    <img src="/assets/images/projects/indonesia_gis/ground_surface_detail.png" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <img src="/assets/images/projects/indonesia_gis/ground_surface_detail.png" style="width: 50%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
     <p style="font-size: 0.75em; color: #666; margin-top: 5px;"><i>최종 지면 추출 디테일</i></p>
   </div>
+</div>
+
+### 4. COPC 라이브러리 직접 마샬링 및 실시간 점군 스트리밍
+- **문제 상황/목표**: 기가바이트 단위의 원본 .las 파일에서 특정 공간 영역(Bounding Box)만 실시간으로 빠르게 로드해야 하는 요구사항 존재.
+- **해결 방안 (Action)**: C++ 기반 [COPC(Cloud Optimized Point Cloud) 라이브러리](https://github.com/RockRobotic/copc-lib)를 **직접 C# 마샬링**하여 통합. 원본 .las 파일을 공간적으로 정렬(Sorted)된 .laz 포맷으로 변환하고, Bounding Box를 입력으로 받아 해당 공간 데이터만 실시간으로 스트리밍 로드하는 기능 구현.
+- **결과 (Result)**: 전체 데이터셋 로드 없이 관심 영역만 즉시 추출 가능하여, 기가바이트 단위 점군 데이터의 실시간 정밀 검증 워크플로우 구축.
+
+🔗 **[RockRobotic/copc-lib](https://github.com/RockRobotic/copc-lib)**
+
+<div style="text-align: center; margin: 20px 0;">
+  <video width="100%" height="auto" autoplay loop muted playsinline style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+    <source src="/assets/videos/projects/indonesia_gis/COPC_마살량.webm" type="video/webm">
+    <source src="/assets/videos/projects/indonesia_gis/COPC_마살량.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <p style="color: #666; font-size: 0.9em; margin-top: 8px;"><i>COPC 마샬링 기반 실시간 점군 스트리밍 시연 — Bounding Box 입력 시 해당 영역 즉시 로드</i></p>
 </div>
 
 ---
