@@ -38,10 +38,12 @@ order: 1
   <p style="font-size: 0.8em; color: #666; margin-top: 5px;"><i>GIS 툴에서 중복 영역이 빨간색으로 표시된 모습</i></p>
 </div>
 
-### 3. 고속 DTM 생성 엔진 및 실시간 점군 가시화/검증 파이프라인 통합
-- **문제 상황/목표**: 기존 연구팀의 Python 기반 로직(PDAL CSF)의 성능 한계(36시간 소요)와 연구 환경에 편중된 코드 구조로 인한 상용 배포의 어려움. 또한, 자동 생성된 모델링(LOD2)을 실시간으로 검증할 수 있는 환경 부재.
-- **해결 방안 (Action)**: 상용 배포 가용성을 위해 핵심 로직을 C# 네이티브 코드로 독자 재설계하고, C++ 기반 COPC 라이브러리를 **C# 마샬링**으로 통합. 연구팀과 개발팀 사이에서 **정밀 성능 비교 및 속도 Trade-off 분석**을 주도하여 양 팀의 기술적 간극을 해소하고 최적화된 엔진 확정.
-- **결과 (Result)**: 69GB 데이터 처리 시간을 약 17시간 수준으로 단축(70MB/min 처리 속도 달성)함과 동시에, 기가바이트 단위의 데이터셋에서도 실시간 점군 로드 및 모델링 정밀도 검증이 가능한 상용 통합 엔진 완성.
+### 3. 고속 DTM 생성 엔진 및 COPC 기반 실시간 점군 가시화·검증 통합
+- **문제 상황/목표**: 기존 연구팀 Python 기반 로직(PDAL CSF)의 성능 한계(36시간 소요)와 연구 환경 편중 코드 구조로 인한 상용 배포 어려움. 자동 생성 모델링(LOD2)의 실시간 검증 환경 부재 및 대용량 .las 파일에서 특정 공간 영역만 즉시 로드하는 기능 필요.
+- **해결 방안 (Action)**: 핵심 DTM 로직을 C# 네이티브로 독자 재설계하고, C++ 기반 [COPC 라이브러리](https://github.com/RockRobotic/copc-lib)를 **직접 C# 마샬링**으로 통합. 원본 .las를 공간 정렬된 .laz로 변환 후 Bounding Box 입력 시 해당 영역만 실시간 스트리밍 로드. 연구팀↔개발팀 간 **정밀 성능 비교 및 Trade-off 분석**을 주도하여 최적화된 엔진 확정.
+- **결과 (Result)**: 69GB 처리 시간 36시간 → 약 17시간 단축(70MB/min). 기가바이트 단위 데이터셋에서 Bounding Box 기반 실시간 점군 로드 및 LOD2 정밀 검증 가능한 상용 통합 엔진 완성.
+
+<div style="width: 50%; margin: 20px auto;">
 
 ```mermaid
 graph TD
@@ -58,6 +60,8 @@ graph TD
     style FinalDTM fill:#fff,stroke:#333,stroke-width:2px
 ```
 
+</div>
+
 <div style="display: flex; gap: 10px; justify-content: space-between; margin-top: 20px;">
   <div style="flex: 1; text-align: center;">
     <img src="/assets/images/projects/indonesia_gis/ground_extraction_algorithm.png" style="width: 50%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
@@ -73,22 +77,6 @@ graph TD
   </div>
 </div>
 
-### 4. COPC 라이브러리 직접 마샬링 및 실시간 점군 스트리밍
-- **문제 상황/목표**: 기가바이트 단위의 원본 .las 파일에서 특정 공간 영역(Bounding Box)만 실시간으로 빠르게 로드해야 하는 요구사항 존재.
-- **해결 방안 (Action)**: C++ 기반 [COPC(Cloud Optimized Point Cloud) 라이브러리](https://github.com/RockRobotic/copc-lib)를 **직접 C# 마샬링**하여 통합. 원본 .las 파일을 공간적으로 정렬(Sorted)된 .laz 포맷으로 변환하고, Bounding Box를 입력으로 받아 해당 공간 데이터만 실시간으로 스트리밍 로드하는 기능 구현.
-- **결과 (Result)**: 전체 데이터셋 로드 없이 관심 영역만 즉시 추출 가능하여, 기가바이트 단위 점군 데이터의 실시간 정밀 검증 워크플로우 구축.
-
-🔗 **[RockRobotic/copc-lib](https://github.com/RockRobotic/copc-lib)**
-
-<div style="text-align: center; margin: 20px 0;">
-  <video width="100%" height="auto" autoplay loop muted playsinline style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-    <source src="/assets/videos/projects/indonesia_gis/COPC_마살량.webm" type="video/webm">
-    <source src="/assets/videos/projects/indonesia_gis/COPC_마살량.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-  <p style="color: #666; font-size: 0.9em; margin-top: 8px;"><i>COPC 마샬링 기반 실시간 점군 스트리밍 시연 — Bounding Box 입력 시 해당 영역 즉시 로드</i></p>
-</div>
-
 ---
 
 ## 🔗 관련 기술 블로그
@@ -98,10 +86,20 @@ graph TD
 
 ### 부록: 시스템 구동 시연
 
-<div style="text-align: center; margin: 20px 0;">
-  <video width="100%" height="auto" autoplay loop muted playsinline style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-    <source src="/assets/videos/projects/indonesia_gis/gis_tool_demo.webm" type="video/webm">
-    Your browser does not support the video tag.
-  </video>
-  <p style="color: #666; font-size: 0.9em; margin-top: 8px;"><i>도시급 항공 데이터 처리 상용 GIS 툴 구동 시연</i></p>
+<div style="display: flex; gap: 20px; justify-content: center; margin: 20px 0; flex-wrap: wrap;">
+  <div style="width: 48%; text-align: center;">
+    <video width="100%" height="auto" autoplay loop muted playsinline style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+      <source src="/assets/videos/projects/indonesia_gis/gis_tool_demo.webm" type="video/webm">
+      Your browser does not support the video tag.
+    </video>
+    <p style="color: #666; font-size: 0.9em; margin-top: 8px;"><i>도시급 항공 데이터 처리 상용 GIS 툴 구동 시연</i></p>
+  </div>
+  <div style="width: 48%; text-align: center;">
+    <video width="100%" height="auto" autoplay loop muted playsinline style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+      <source src="/assets/videos/projects/indonesia_gis/COPC_마살량.webm" type="video/webm">
+      <source src="/assets/videos/projects/indonesia_gis/COPC_마살량.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <p style="color: #666; font-size: 0.9em; margin-top: 8px;"><i>COPC 마샬링 기반 실시간 점군 스트리밍 시연 — Bounding Box 입력 시 해당 영역 즉시 로드</i></p>
+  </div>
 </div>
