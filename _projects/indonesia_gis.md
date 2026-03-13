@@ -62,7 +62,7 @@ order: 1
 
 ---
 
-## 🔗 관련 기술 블로그
+## 관련 기술 블로그
 - **[Nuitka를 이용한 Python 프로젝트 보안 배포](https://jinwoo-sync.github.io/2026/03/01/nuitka-python-deployment.html)**: 상용 소프트웨어 배포를 위한 소스코드 보안 및 실행 환경 최적화 과정 정리
 
 ---
