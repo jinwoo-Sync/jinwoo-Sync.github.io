@@ -3,7 +3,7 @@ layout: project
 title: "Camera-Camera and Camera-Map Calibration Tool"
 period: "2023.04 ~ 2024.09"
 category: "Calibration"
-tech: "C#, OpenCV, PnP Algorithm"
+tech: "C#, OpenCV, WPF, Newton-Raphson"
 role: "Project Manager & Lead Developer"
 company: "Mobiltech (Hyundai Motors Contract)"
 order: 2
@@ -13,7 +13,7 @@ order: 2
 - **프로젝트명**: Camera-Camera / Camera-Map Calibration Tool (현대자동차 외주 프로젝트)
 - **기간**: 2023.04 ~ 2024.09
 - **역할**: Project Manager & Lead Developer (시스템 아키텍처 설계 및 핵심 알고리즘 개발 주도)
-- **기술 (Tech Stack)**: C#, OpenCV, PnP Algorithm, WPF
+- **기술 (Tech Stack)**: C#, OpenCV, WPF, Newton-Raphson (Undistortion)
 
 ## 주요 성과 (Key Achievements)
 - 기존 개별 프로그램 기반의 반복 작업(카메라 모델 선정 → 시뮬레이션 → 실제 데이터 취득 → 품질 수치 검증 → 미달 시 재진행)을 통합하여 약 **85~90%의 작업 소요 시간 단축** 및 유지보수 효율화 달성
@@ -22,8 +22,8 @@ order: 2
 ## 상세 업무 및 기여 (Responsibilities & Contributions)
 
 ### 1. 카메라 및 지도 캘리브레이션 통합 시스템 설계
-- **문제 상황/목표**: 차량 주변을 커버하는 다중 카메라 간의 정합성(Camera-Camera)과, 추출된 피처를 실제 지도 좌표계(Camera-Map)에 맵핑하는 자동화 툴 필요.
-- **해결 방안 (Action)**: C#과 OpenCV를 결합하여 다중 뷰의 피처를 추출하고 PnP(Perspective-n-Point) 알고리즘을 기반으로 최적의 변환 행렬을 도출하는 통합 UI 애플리케이션 직접 설계 및 개발.
+- **문제 상황/목표**: 차량 주변을 커버하는 다중 카메라 간의 정합성(Camera-Camera)과, 카메라 이미지를 기준맵 좌표계(Camera-Map)에 탑뷰로 투영하는 자동화 툴 필요.
+- **해결 방안 (Action)**: C#과 OpenCV를 결합하여 카메라 왜곡 모델(k1, k2)과 Extrinsic 파라미터 기반의 가상환경/탑뷰 투영 시스템 설계 및 개발. 왜곡된 이미지 좌표에서 정규화 좌표를 역산하기 위해 Newton-Raphson 기반 왜곡 역변환 알고리즘 구현.
 - **결과 (Result)**: 현장 작업자가 복잡한 수식 연산 없이 직관적인 UI 환경에서 고정밀 캘리브레이션을 수행할 수 있는 워크플로우 구축.
 
 ### 2. 품질 및 표준 준수 검증 모듈 구현
