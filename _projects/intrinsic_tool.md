@@ -1,7 +1,7 @@
 ---
 layout: project
 title: "Camera Intrinsic Calibration Tool"
-period: "2022.03 ~ 2023.04"
+period: "2023.01 ~ 2023.04"
 category: "Calibration"
 tech: "C++, Qt, OpenCV, Eigen (LM Optimization)"
 role: "Developer"
@@ -11,7 +11,7 @@ order: 4
 
 ## 프로젝트 개요 (Overview)
 - **프로젝트명**: Camera Intrinsic Calibration Tool (사내 코어 툴 고도화)
-- **기간**: 2022.03 ~ 2023.04
+- **기간**: 2023.01 ~ 2023.04
 - **역할**: Developer (수학적 검증 모델 구현 및 데이터 시각화 파이프라인 개발)
 - **기술 (Tech Stack)**: C++, Qt, OpenCV, Eigen (LM Optimization)
 

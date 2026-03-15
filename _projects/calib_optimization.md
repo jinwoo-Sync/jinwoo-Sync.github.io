@@ -1,7 +1,7 @@
 ---
 layout: project
 title: "Calibration Program Optimization"
-period: "2022.06 ~ 2023.06"
+period: "2022.06 ~ 2023.01"
 category: "Calibration"
 tech: "C++, OpenCV, PnP Algorithm"
 role: "Research Engineer"
@@ -11,7 +11,7 @@ order: 1
 
 ##  프로젝트 개요 (Overview)
 - **프로젝트명**: Calibration Program Optimization (사내 캘리브레이션 프로그램 자동화 고도화)
-- **기간**: 2022.06 ~ 2023.06
+- **기간**: 2022.06 ~ 2023.01
 - **역할**: Research Engineer (PnP 기반 자동 캘리브레이션 기능 설계 및 구현, 정량적/정성적 평가 체계 구축)
 - **기술 (Tech Stack)**: C++, OpenCV, PnP Algorithm
 
