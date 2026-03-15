@@ -1,7 +1,7 @@
 ---
 layout: project
 title: "Data Synchronization (Mapping System)"
-period: "2023.02 ~ Present"
+period: "2024.09 ~ 2025.01"
 category: "Time Synchronization"
 tech: "C++, PTP, GPRMC, GPIO"
 role: "Team Member"
@@ -11,7 +11,7 @@ order: 6
 
 ##  프로젝트 개요 (Overview)
 - **프로젝트명**: Data Synchronization - MMS 시간 동기화 시스템 고도화
-- **기간**: 2023.02 ~ Present
+- **기간**: 2024.09 ~ 2025.01
 - **역할**: Team Member (PTP 시스템 구축, GPRMC 파싱 및 데이터 검증, 동기화 보드 업그레이드 기여)
 - **기술 (Tech Stack)**: C++, PTP (SW/HW), GPRMC, GPIO
 
