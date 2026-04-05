@@ -41,4 +41,6 @@ order: 1
 
 ![](/assets/images/projects/calib_optimization/workflow.png)
 
-![](/assets/images/projects/calib_optimization/result2.png)
+![](/assets/images/projects/calib_optimization/img_00024.jpg)
+
+![](/assets/images/projects/calib_optimization/최적화.png)
