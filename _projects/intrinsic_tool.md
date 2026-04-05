@@ -1,7 +1,7 @@
 ---
 layout: project
 title: "Camera Intrinsic Calibration Tool"
-period: "2022.03 ~ Present"
+period: "2023.01 ~ 2023.04"
 category: "Calibration"
 tech: "C++, Qt, OpenCV, Eigen (LM Optimization)"
 role: "Developer"
@@ -11,7 +11,7 @@ order: 4
 
 ## 프로젝트 개요 (Overview)
 - **프로젝트명**: Camera Intrinsic Calibration Tool (사내 코어 툴 고도화)
-- **기간**: 2022.03 ~ Present
+- **기간**: 2023.01 ~ 2023.04
 - **역할**: Developer (수학적 검증 모델 구현 및 데이터 시각화 파이프라인 개발)
 - **기술 (Tech Stack)**: C++, Qt, OpenCV, Eigen (LM Optimization)
 
@@ -41,7 +41,7 @@ order: 4
 ### 부록: 시스템 구동 화면
 
 ![MTF 및 Projection Error 시각화 환경](/assets/images/projects/intrinsic_tool/calib_good_mtf.png)
-*좌측 하단: MTF 측정 프로파일 곡선 / 우측 상단: FOV Coverage(Pose Map) / 우측 하단: Re-projection Error 100배 확대(XY Map)*
+*좌측 전체 이미지 파란 직선: MTF 측정 프로파일 곡선 / 우측 상단 작은 검은색 공간 : FOV Coverage(Pose Map) / 우측 하단 작은 검은색 공간 : Re-projection Error 100배 확대(XY Map)*
 
 ![전체 FOV 커버리지 진행 상황](/assets/images/projects/intrinsic_tool/full_fov_coverage.png)
 *FOV 전역을 고르게 커버하도록 유도하는 시각화 인터페이스*
