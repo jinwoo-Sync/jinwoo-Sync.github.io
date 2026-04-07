@@ -41,7 +41,8 @@ order: 6
 - **해결 방안 (Action)**:
   - **GPS 시각 동기화 레이어**: Garmin GPS의 PPS 신호를 Orin Nano GPIO 핀으로 입력(`pps-gpio` 커널 드라이버)하고, NMEA(GPRMC)를 UART(`/dev/ttyTHS1`)로 수신하여 `gpsd`에 연결. `chrony`의 `refclock SHM`(NMEA) + `refclock PPS /dev/pps0`(Hardpps) 구성으로 시스템 클럭(`CLOCK_REALTIME`)을 GPS 기준으로 동기화.
   - **GPIO 트리거 출력**: GPS 동기화된 `CLOCK_REALTIME`을 기준으로 1초를 100ms 단위로 **10분할(10Hz)** 하여 GPIO BCM 18·19번 핀에 트리거 펄스를 출력(`JetsonGPIO` 라이브러리, `m_PPS_DIV_Mode`). 카메라·LiDAR 트리거 라인에 직접 연결해 다중 센서 동기 트리거 구현.
-- **결과 (Result)**: Garmin PPS/GPRMC 기반 GPS 시각 동기화 → 10Hz GPIO 하드웨어 트리거 출력 파이프라인 구축. 이후 전용 SC-400 보드로의 전환을 위한 기술적 검증 역할 수행.
+- **결과 (Result)**: Garmin PPS/GPRMC 기반 GPS 시각 동기화 → 10Hz GPIO 하드웨어 트리거 출력 파이프라인 구축.
+- **한계 및 개발 중단**: 트리거 생성의 시간 기준이 `CLOCK_REALTIME`이고, 이 클럭 자체가 GPS(PPS/NMEA)에 종속되는 구조였기 때문에, **GPS 신호가 불안정하거나 단절될 경우 트리거 간격도 그대로 흔들리는 근본적인 문제**가 존재. `chrony`가 slewing으로 일부 완충하지만, GPS가 트리거 안정성의 단일 장애점(SPOF)이 되는 구조적 한계를 해결할 수 없어 **개발 중단**. 이후 독립적인 하드웨어 클럭 및 GPS freerun 기능을 갖춘 전용 SC-400 보드로 전환.
 
 ### 3. 트리거 타임 성능 평가
 - **문제 상황/목표**: 동기화 시스템의 정확도를 정량적으로 검증할 필요.
