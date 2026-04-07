@@ -3,7 +3,7 @@ layout: project
 title: "Replica Program (Mobile Mapping System) Tool Development"
 period: "2022.03 ~ Present"
 category: "Mobile Mapping System"
-tech: "C++, Camera SDK (Hikvision, MIPI, GMSL), NVIDIA Orin, IPC"
+tech: "C++, Camera SDK (Hikvision, MIPI, GMSL), NVIDIA Orin"
 role: "Team Member"
 company: "Mobiltech (Core System)"
 order: 5
@@ -48,7 +48,25 @@ order: 5
   - **한계**: 회전 구간에서 DMI tick 기반 초기값을 적용할 경우 기존 SLAM 시스템과의 융합이 불완전하여 맵이 튀는 현상이 발생하며, GNSS 신호가 유효한 구간에서는 동작하지 않고 **GNSS 값이 소실되는 구간에 한해서만 적용 가능**하다는 제약이 있음.
 - **결과 (Result)**: MMS/SLAM 코드들을 **모듈화**하고 빌드 순서와 각기 다른 라이브러리 버전을 통일하여, 통합된 빌드 시스템 구축을 통해 코드 재사용성을 높임.
 
-### 5. 하드웨어 트리거 제어 모듈 구현
+### 5. 다양한 구성의 센서 로깅 지원
+
+- **주요 구성**:
+  - **표준 MMS 구성**: 4K 카메라 5대(Hikvision MV-CH120-10GC) + LiDAR 1대(Pandar128) + GNSS + DMI + SC400 트리거 동시 로깅.
+  - **LiDAR 단독 대규모 구성**: LiDAR 24대 동시 취득 (싱가폴 현대자동차 공장 프로젝트).
+  - **독립 센서 로깅**: 카메라·LiDAR·GNSS 등 각 센서를 독립적으로 선택하여 로깅 가능한 구조.
+
+- **대역폭 계산 (표준 MMS 구성 기준)**:
+
+  | 센서 | 계산 | 대역폭 |
+  |------|------|--------|
+  | 카메라 × 5 (MV-CH120-10GC, 4K, 10fps, 8-bit) | 3840×2160×1B×10fps × 5 | ~415 MB/s |
+  | LiDAR × 1 (Pandar128, Single Return, 10Hz) | 128채널 UDP 패킷 기준 | ~12.5 MB/s |
+  | GNSS / DMI / SC400 | 직렬·소형 패킷 | 무시 가능 |
+  | **합계** | | **~428 MB/s** |
+
+  카메라는 각각 1GigE로 PC에 직결하며, 다중 LiDAR 구성 시에는 스위치를 통해 PTP 동기화 후 단일 이더넷 포트로 데이터를 수신하는 구조. 실제 로깅 스토리지는 PCIe-to-SATA 연결 장치에 SATA SSD를 사용하여 현장 데이터를 저장.
+
+### 6. 하드웨어 트리거 제어 모듈 구현
 - **문제 상황/목표**: 카메라 및 LiDAR 등 여러 센서 간의 정확한 시각 동기화를 위한 하드웨어 제어 시스템이 필요.
 - **해결 방안 (Action)**: NVIDIA Orin Nano의 GPIO를 활용한 트리거 보드 인터페이스를 개발하여 센서 간 동기화 및 제어 시스템 구축.
 - **결과 (Result)**: 다중 센서 환경에서 정확한 시각 동기화 기반의 데이터 수집 체계 확립.
@@ -56,6 +74,11 @@ order: 5
 ---
 
 ### 부록: 프로젝트 결과물
+
+**실제 로깅 세션 로그**
+
+![](/assets/images/projects/replica/logging_log.png)
+*카메라 5대·LiDAR·GPS·SC400 트리거 동시 로깅 세션 초기화 로그*
 
 ![](/assets/images/projects/replica/system_diagram.png)
 
