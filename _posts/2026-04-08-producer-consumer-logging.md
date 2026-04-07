@@ -78,25 +78,24 @@ index=2, offset=12345, size=11755, posix=..., gps_time=...
 
 MIB는 센서 raw 그대로, MIC는 demosaic 완료된 컬러 이미지다.
 
-### SSD 저장 최적화
+### SSD 저장 방식
 
-현재 코드는 매 프레임마다 `fopen` → `fwrite` → `fclose`를 반복한다. 파일 포인터를 세션 동안 유지하고 `fallocate`로 공간을 미리 확보하면 I/O 지연 편차를 줄일 수 있다.
+매 프레임마다 `fopen("a+b")` → `fwrite` → `fclose`를 반복한다. append 모드이므로 `fseek`와 무관하게 데이터는 항상 EOF에 이어붙고, `m_llFrame_offset`은 코드가 직접 누적해서 인덱스 파일에 기록한다.
 
 ```cpp
-// 세션 시작 시 한 번만
-int fd = open("data.mib", O_WRONLY | O_CREAT, 0644);
-fallocate(fd, 0, 0, 4ULL * 1024 * 1024 * 1024); // 4GB 사전 확보
-FILE* fp = fdopen(fd, "wb");
+// 매 프레임마다 반복
+FILE *f0 = fopen(m_dstPathData.data(), "a+b");
+fseek(f0, m_llFrame_offset, SEEK_SET); // append 모드에서 write엔 무의미
+fwrite(data, dataSize, 1, f0);
+fclose(f0);
 
-// 매 프레임: open/close 없이 바로 쓰기
-fwrite(jpegData, dataSize, 1, fp);
-
-// 세션 종료 시 한 번만
-fclose(fp);
-truncate("data.mib", actualWrittenSize); // 실제 쓴 만큼으로 조정
+// 인덱스 파일에 offset 기록
+file_out << index << '\t' << posix << '\t' << eventNum << '\t'
+         << dataSize << '\t' << m_llFrame_offset << '\t' << gpsTime;
+m_llFrame_offset += dataSize;
 ```
 
-`fallocate`는 `std::vector::reserve()`와 동일한 개념이다. 파일시스템이 연속된 블록을 미리 확보하므로 매 write마다 블록 할당 오버헤드가 사라진다.
+`m_StorageInterval` 프레임마다 새 파일 쌍으로 롤링되고, 파일명은 로컬 시각 `YYMMDDHHMMSS`로 붙는다.
 
 ---
 
