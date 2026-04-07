@@ -3,7 +3,7 @@ layout: project
 title: "Camera Intrinsic Calibration Tool"
 period: "2022.11 ~ 2023.04"
 category: "Calibration"
-tech: "C++, Qt, OpenCV, Eigen (LM Optimization)"
+tech: "C++, Qt, OpenCV"
 role: "Developer"
 company: "Mobiltech (Internal R&D)"
 order: 4
@@ -13,7 +13,7 @@ order: 4
 - **프로젝트명**: Camera Intrinsic Calibration Tool (사내 코어 툴 고도화)
 - **기간**: 2022.11 ~ 2023.04
 - **역할**: Developer (수학적 검증 모델 구현 및 데이터 시각화 파이프라인 개발)
-- **기술 (Tech Stack)**: C++, Qt, OpenCV, Eigen (LM Optimization)
+- **기술 (Tech Stack)**: C++, Qt, OpenCV
 
 ## 주요 성과 (Key Achievements)
 - **비전문가 업무 이관 및 R&D 효율화**: 현장 오퍼레이터도 즉각적인 품질 판단이 가능한 직관적 시각화 환경을 완비하여, 캘리브레이션 실무를 타 부서로 성공적으로 이관하고 코어 개발자들의 R&D 집중 시간 대폭 확보
