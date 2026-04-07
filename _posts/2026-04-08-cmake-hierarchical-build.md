@@ -175,15 +175,15 @@ endmacro()
 
 `_add_package_MMS_MODULELODER`는 CoreModule 전체를 add_subdirectory하므로, 이걸 하나 호출하면 위의 모든 센서 모듈이 한 번에 빌드된다.
 
-### 3가지 핵심 메커니즘 정리
+### 3가지 빌드 순서 제어 방법
 
-| 메커니즘 | 역할 |
-|----------|------|
+| 방법 | 역할 |
+|------|------|
 | 매크로 안 재귀 호출 순서 | cmake 그래프 등록 순서 보장 (UTIL → IO → LIDAR) |
 | `add_dependencies()` | `make -j` 병렬 빌드 시에도 링크 순서 보장 |
 | `if(NOT TARGET ...)` | 여러 앱이 같은 모듈을 요청해도 한 번만 빌드 |
 
-두 메커니즘이 같이 있어야 안전하다. 재귀 호출만으로는 `make -j`에서 타이밍 문제가 생길 수 있고, `add_dependencies`만으로는 include 경로가 안 잡힐 수 있다.
+재귀 호출만으로는 `make -j`에서 타이밍 문제가 생길 수 있고, `add_dependencies`만으로는 include 경로가 안 잡힐 수 있다. 둘 다 있어야 안전하다.
 
 ---
 
