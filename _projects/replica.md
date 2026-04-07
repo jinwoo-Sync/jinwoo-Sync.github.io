@@ -36,7 +36,14 @@ order: 5
 - **해결 방안 (Action)**: 신규 Hesai LiDAR SDK로 업데이트하여 기존 데이터 로깅 파이프라인에 연동.
 - **결과 (Result)**: 기존 파이프라인에 큰 에러 없이 안정적으로 통합 완료.
 
-### 3. 다양한 구성의 센서 로깅 지원
+### 3. Replica Lite SW 트리거 기능 개발
+- **문제 상황/목표**: 단일 카메라·단일 LiDAR·Garmin GPS + Jetson Orin Nano로 구성된 도로 POI 데이터 취득 특화 경량 제품군(Replica Lite)에서, 별도 하드웨어 트리거 보드 없이 로깅 툴 내에서 SW적으로 트리거 신호를 생성하는 기능이 필요.
+- **해결 방안 (Action)**: Jetson Orin Nano의 GPIO를 활용하여 로깅 툴 내부에서 SW적으로 트리거 타이밍을 생성하는 기능을 구현하고, 기존 로깅 파이프라인에 통합.
+- **결과 (Result)**: Jetson Orin 플랫폼에서 별도 트리거 보드 없이 SW만으로 트리거 기능을 구현하여 Replica Lite 제품군의 로깅 시스템에 정상 적용.
+
+---
+
+## 시스템 운용 구성 및 대역폭
 
 - **주요 구성**:
   - **표준 MMS 구성**: 4K 카메라 5대(Hikvision MV-CH120-10GC) + LiDAR 1대(Pandar128) + GNSS + DMI + SC400 트리거 동시 로깅.
@@ -54,11 +61,6 @@ order: 5
 
   카메라는 각각 1GigE로 PC에 직결하며, 다중 LiDAR 구성 시에는 스위치를 통해 PTP 동기화 후 단일 이더넷 포트로 데이터를 수신하는 구조. 실제 로깅 스토리지는 PCIe-to-SATA 연결 장치에 SATA SSD를 사용하여 현장 데이터를 저장.
 
-### 4. Replica Lite SW 트리거 기능 개발
-- **문제 상황/목표**: 단일 카메라·단일 LiDAR·Garmin GPS + Jetson Orin Nano로 구성된 도로 POI 데이터 취득 특화 경량 제품군(Replica Lite)에서, 별도 하드웨어 트리거 보드 없이 로깅 툴 내에서 SW적으로 트리거 신호를 생성하는 기능이 필요.
-- **해결 방안 (Action)**: Jetson Orin Nano의 GPIO를 활용하여 로깅 툴 내부에서 SW적으로 트리거 타이밍을 생성하는 기능을 구현하고, 기존 로깅 파이프라인에 통합.
-- **결과 (Result)**: Jetson Orin 플랫폼에서 별도 트리거 보드 없이 SW만으로 트리거 기능을 구현하여 Replica Lite 제품군의 로깅 시스템에 정상 적용.
-
 ---
 
 ### 부록: 프로젝트 결과물
@@ -70,25 +72,14 @@ order: 5
 
 ![](/assets/images/projects/replica/system_diagram.png)
 
-![](/assets/images/projects/replica/sensor_interface.png)
-
-![](/assets/images/projects/replica/mapping_result.png)
-*저가 센서 xsens 기반 MMS 매핑 결과물*
-
 ![](/assets/images/projects/replica/trigger_view.png)
-*하드웨어 트리거 제어 모듈 뷰*
+*sw 트리거 제어 모듈 뷰*
 
 **DMI 기반 로컬 맵 생성**
 
 ![](/assets/images/projects/mms/module_architecture.png)
 
 ![](/assets/images/projects/mms/mms.gif)
-
-![](/assets/images/projects/mms/gnss_mss이미지.png)
-
-**GNSS 한계점**
-
-![](/assets/images/projects/mms/gnss한계점.png)
 
 **공인 인증**
 
