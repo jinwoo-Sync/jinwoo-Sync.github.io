@@ -28,7 +28,7 @@ tags: [C++, Android, Kotlin, MediaCodec, Queue, Logging, SSD, MIB, MIC]
 ### 큐 구조
 
 ```cpp
-// UtilRing: 고정 크기 원형 버퍼 (락 프리에 가까운 구조)
+// UtilRing: 고정 크기 원형 버퍼
 UtilRing<DataFormatCamera::CameraData, 50> cameraQ; // 생산자가 밀어넣음
 
 // 카메라 콜백 (생산자)
