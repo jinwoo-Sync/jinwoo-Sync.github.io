@@ -28,7 +28,7 @@ order: 4
 
 ### 2. MTF (Modulation Transfer Function) 포커싱 지표 연동
 - **문제 상황/목표**: 카메라 초점(Focus)을 맞출 때 육안에만 의존하여 발생하는 정밀도 저하 문제 해결.
-- **해결 방안 (Action)**: 기존 오픈소스 MTF 분석 모듈을 캘리브레이션 현장 환경에 적용. 체커보드는 발광이 아닌 반사 타겟이므로 표준 Michelson Contrast(`(Lmax−Lmin)/(Lmax+Lmin)`)보다 `Lmax` 단독 정규화(`(Lmax−Lmin)/Lmax`)가 초점 변화에 더 민감하게 반응함을 확인하고 수식을 재정의. 산출된 MTF 값과 1D 프로파일 곡선을 Qt UI에 실시간 연동.
+- **해결 방안 (Action)**: 기존 오픈소스 MTF 분석 모듈을 캘리브레이션 현장 환경에 적용. 체커보드는 발광이 아닌 반사 타겟이므로 표준 Michelson Contrast(`(Lmax−Lmin)/(Lmax+Lmin)`)보다 `Lmax` 단독 정규화(`(Lmax−Lmin)/Lmax`)가 초점 변화에 더 민감하게 반응함을 확인하고 해당 수식으로 변경.
 - **결과 (Result)**: 렌즈 초점 조정 시 선명도를 수치(MTF)로 즉시 확인할 수 있어 정밀한 포커싱 작업 보장.
 
 ### 3. FOV Coverage 실시간 모니터링 (Pose Map)
