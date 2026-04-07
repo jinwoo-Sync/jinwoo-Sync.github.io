@@ -68,11 +68,13 @@ order: 5
 **실제 로깅 세션 로그**
 
 ![](/assets/images/projects/replica/logging_log.png)
+
 *카메라 5대·LiDAR·GPS·SC400 트리거 동시 로깅 세션 초기화 로그*
 
 ![](/assets/images/projects/replica/system_diagram.png)
 
 ![](/assets/images/projects/replica/trigger_view.png)
+
 *sw 트리거 제어 모듈 뷰*
 
 **DMI 기반 로컬 맵 생성**
