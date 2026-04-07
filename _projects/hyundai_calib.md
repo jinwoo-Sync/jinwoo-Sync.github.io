@@ -3,7 +3,7 @@ layout: project
 title: "Camera-Camera and Camera-Map Calibration Tool"
 period: "2023.04 ~ 2024.09"
 category: "Calibration"
-tech: "C#, OpenCV, WPF, Newton-Raphson"
+tech: "C#, OpenCV, WPF"
 role: "Project Manager & Lead Developer"
 company: "Mobiltech (Hyundai Motors Contract)"
 order: 2
@@ -13,7 +13,7 @@ order: 2
 - **프로젝트명**: Camera-Camera / Camera-Map Calibration Tool (현대자동차 외주 프로젝트)
 - **기간**: 2023.04 ~ 2024.09
 - **역할**: Project Manager & Lead Developer (시스템 아키텍처 설계 및 핵심 알고리즘 개발 주도)
-- **기술 (Tech Stack)**: C#, OpenCV, WPF, Newton-Raphson (Undistortion)
+- **기술 (Tech Stack)**: C#, OpenCV, WPF
 
 ## 주요 성과 (Key Achievements)
 - 기존 개별 프로그램 기반의 반복 작업(카메라 모델 선정 → 시뮬레이션 → 실제 데이터 취득 → 품질 수치 검증 → 미달 시 재진행)을 통합하여 약 **85~90%의 작업 소요 시간 단축** 및 유지보수 효율화 달성
