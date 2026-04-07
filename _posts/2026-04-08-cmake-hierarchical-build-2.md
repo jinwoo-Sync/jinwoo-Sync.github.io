@@ -4,10 +4,6 @@ title: "CMake 계층적 빌드 체계 — 실제 CMakeLists.txt 연결 구조"
 tags: [CMake, C++, Build System]
 ---
 
-[이전 포스트](/2026/04/08/cmake-hierarchical-build.html)에서 `setup.cmake` 매크로 구조를 정리했다. 이번엔 실제 `CMakeLists.txt`들이 Layer 간에 어떻게 연결되는지 실제 코드 기준으로 정리한다.
-
----
-
 ## Layer 0 — 루트 CMakeLists.txt (전체 빌드 진입점)
 
 ```cmake
