@@ -53,8 +53,6 @@ std::atomic<double> m_triggerTime{-1.0};
 
 기존 SC400, CameraEconRoute 클래스는 동일 패턴에서 `mutex`/`atomic`을 올바르게 쓰고 있었는데, ARM 포팅 시 빠르게 작성한 OrinNano에만 누락됐다.
 
-**ARM에서 특히 중요한 이유**: x86은 TSO(Total Store Order) 메모리 모델이라 레이스가 잠자는 경우가 있지만, ARM64는 약한 메모리 모델이라 Jetson에서 확정적으로 터진다. ARM64에서 `std::atomic`은 `ldar`/`stlr`(Load-Acquire/Store-Release) 명령어로 컴파일되어 메모리 배리어가 보장된다.
-
 ---
 
 ## 3. UBSan — 두 가지 사례
@@ -77,7 +75,13 @@ printf("m_triggerTime = %ld\n", m_triggerTime);  // double을 %ld로 → UB
 printf("m_triggerTime = %f\n", m_triggerTime);
 ```
 
-x86_64에서는 double/long 모두 64비트라 우연히 넘어가기도 했지만, ARM64 AArch64 ABI에서는 FP 인자가 `d0~d7`, 정수 인자가 `x0~x7`로 완전히 분리된다. `%ld`가 전혀 다른 레지스터를 읽어 쓰레기값을 출력한다.
+x86-64에서는 우연히 넘어가기도 했지만, ARM64에서는 **부동소수점 인자와 정수 인자가 물리적으로 완전히 다른 공간에 저장**된다. `%ld`는 정수 공간을 읽는데 `double`은 FP 공간에 있으니 전혀 관계없는 쓰레기값을 읽게 된다.
+
+| | x86-64 | ARM64 |
+|--|--|--|
+| `double` 저장 위치 | FP 영역 | FP 영역 |
+| `%ld`가 읽는 위치 | FP 영역과 겹치는 경우 있음 | **정수 영역 (FP와 물리적으로 분리)** |
+| 결과 | 우연히 맞는 값이 나올 수 있음 | 쓰레기값 확정 |
 
 ---
 
@@ -107,7 +111,7 @@ std::vector<CalibLidarCamera,
     Eigen::aligned_allocator<CalibLidarCamera>> m_vecCalib;
 ```
 
-x86_64은 `new` 기본 정렬이 16바이트라 Eigen 요구(32바이트)를 우연히 맞추는 경우가 많아 assertion이 안 터진다. ARM64는 기본 정렬이 8바이트 → Jetson에 올리는 순간 캘리브 로드 시점에 즉시 abort.
+x86_64은 `new` 기본 정렬이 16바이트라 Eigen 요구(32바이트)를 우연히 맞추는 경우가 많아 assertion이 안 터진다. ARM64는 기본 정렬이 8바이트 → ARM 노트북에 올리는 순간 캘리브 로드 시점에 즉시 abort.
 
 ---
 
