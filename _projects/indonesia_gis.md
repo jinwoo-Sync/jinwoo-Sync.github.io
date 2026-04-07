@@ -30,17 +30,7 @@ order: 1
   - **프레임워크 가용성 확보**: PyTorch 등 외부 라이브러리 의존성으로 인해 컴파일이 제한되는 모듈은 안정성을 우선하여 패키징 구조를 최적화하는 이원화 전략 채택.
 - **결과 (Result)**: 컴파일 적용 모듈(13종) 기준 소스코드 복구율 0% 및 전체 패키지 무단 변조 리스크 최소화. 15개 이기종 모듈을 단일 빌드 파이프라인으로 통합하여 별도 환경 구축 없이 실행 가능한 상용 수준의 Standalone 패키지 배포 성공.
 
-### 2. 항공 데이터 기반 SHP 자동 병합 로직 개발
-- **문제 상황/목표**: 다중 TIF 이미지에서 건물을 추출하고 병합할 때, 항공 이미지 간 겹치는 영역이 발생하여 SHP 파일에 중복 데이터가 쌓임.
-- **해결 방안 (Action)**: TIF → PNG 변환 후, Airborne 데이터와 Global Building, OSM 데이터를 결합하는 단계에서 공간 좌표 기반의 중복 영역 자동 감지 및 병합 알고리즘 구현.
-- **결과 (Result)**: 중복 면적이 완벽히 제거된 깔끔한 SHP 결과물 생성 파이프라인 확립.
-
-<div style="text-align: center; margin: 16px 0;">
-  <img src="{{ '/assets/images/projects/indonesia_gis/shp_overlap_detection.png' | relative_url }}" style="width: 50%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-  <p style="font-size: 0.8em; color: #666; margin-top: 5px;"><i>GIS 툴에서 중복 영역이 빨간색으로 표시된 모습</i></p>
-</div>
-
-### 3. 고속 DTM 생성 엔진 및 COPC 기반 실시간 점군 가시화·검증 통합
+### 2. 고속 DTM 생성 엔진 및 COPC 기반 실시간 점군 가시화·검증 통합
 - **문제 상황/목표**: 기존 연구팀 Python 기반 로직(PDAL CSF)의 성능 한계(36시간 소요)와 연구 환경 편중 코드 구조로 인한 상용 배포 어려움. 자동 생성 모델링의 실시간 검증 환경 부재 및 대용량 .las 파일에서 특정 공간 영역만 즉시 로드하는 기능 필요.
 - **해결 방안 (Action)**: 핵심 DTM 로직을 C# 네이티브로 독자 재설계하고, C++ 기반 [COPC 라이브러리](https://github.com/RockRobotic/copc-lib)를 **직접 C# 마샬링**으로 통합. 원본 .las를 공간 정렬된 .laz로 변환 후 Bounding Box 입력 시 해당 영역만 실시간 스트리밍 로드. 연구팀↔개발팀 간 **정밀 성능 비교 및 Trade-off 분석**을 주도하여 최적화된 엔진 확정.
 - **결과 (Result)**: 69GB 처리 시간 36시간 → 약 17시간 단축(70MB/min). 기가바이트 단위 데이터셋에서 Bounding Box 기반 실시간 점군 로드 및 정밀 검증 가능한 상용 통합 엔진 완성.
