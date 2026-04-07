@@ -144,13 +144,16 @@ include_directories(
 
 ```cmake
 macro(_add_package_MMS_LIDAR)
-  include_directories(${BASE_DIRECTORY}/.../lidar)  # 이 모듈 헤더 경로 등록
-  include_directories(${BASE_DIRECTORY}/.../io)     # 의존 모듈 헤더도 함께 등록
-  if(NOT TARGET MMS_LIDAR)                          # 이미 등록됐으면 전부 skip (중복 방지)
-    _add_package_MMS_UTIL()                         # 의존 모듈을 먼저 재귀 호출 → cmake 그래프 등록 순서 보장
-    _add_package_MMS_IO()                           # LIDAR보다 IO가 먼저 add_subdirectory됨
-    add_subdirectory(src/lidar bin/lidar)           # 이 모듈을 실제 빌드 대상에 등록
-    add_dependencies(MMS_LIDAR MMS_IO MMS_UTIL)    # make -j 병렬 빌드 시 링크 순서 보장
+  include_directories(${BASE_DIRECTORY}/loggingcoremodule/CoreModule/src/lidar)  # 이 모듈 헤더 경로 등록
+  include_directories(${BASE_DIRECTORY}/loggingcoremodule/CoreModule/src/io)     # 의존 모듈 헤더도 함께 등록
+  include_directories(${BASE_DIRECTORY}/loggingcoremodule/CoreModule/src/camera)
+  include_directories(${BASE_DIRECTORY}/loggingcoremodule/CoreModule/src/util)
+  if(NOT TARGET MMS_LIDAR)                                                        # 이미 등록됐으면 전부 skip (중복 방지)
+    _add_package_MMS_UTIL()                                                       # 의존 모듈을 먼저 재귀 호출 → cmake 그래프 등록 순서 보장
+    _add_package_MMS_IO()                                                         # LIDAR보다 IO가 먼저 add_subdirectory됨
+    add_subdirectory(${BASE_DIRECTORY}/loggingcoremodule/CoreModule/src/lidar     # 이 모듈을 실제 빌드 대상에 등록
+                     ${CMAKE_BINARY_DIR}/loggingcoremodule/CoreModule/src/lidar)
+    add_dependencies(MMS_LIDAR MMS_IO MMS_UTIL)                                  # make -j 병렬 빌드 시 링크 순서 보장
   endif()
 endmacro()
 ```
