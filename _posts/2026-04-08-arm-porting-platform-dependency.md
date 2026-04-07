@@ -52,15 +52,3 @@ elseif(ARCH_FLAGS MATCHES "arm|aarch64")
 endif()
 ```
 
----
-
-## 요약
-
-| | GPIO | GPS (Xsens ELF) |
-|---|---|---|
-| **문제** | 플랫폼 종속 라이브러리 | 아키텍처별 바이너리 혼용 |
-| **해결** | `if(EXISTS)` + `#ifdef` | `ARCH_FLAGS` 경로 분기 |
-
-공통 전략: **cmake가 환경을 감지 → 소스/경로 레벨에서 분기.** 개발자가 별도 옵션 없이 빌드 환경만으로 자동 결정.
-
-> ARM 이식 중 추가로 발견한 UBSan·TSan 이슈는 [Sanitizer 포스트](/2026/03/01/sw-quality-sanitizer.html)에서 다룬다.
