@@ -3,7 +3,7 @@ layout: project
 title: "대규모 도시급 항공 GIS 상용 툴 개발"
 period: "2025.07 ~ Present"
 category: "GIS & Data Pipeline"
-tech: "C#(.NET), Python, PyTorch, C++ Interop(Marshalling), WPF, PDAL, GDAL, SAM3, PyInstaller, Cython"
+tech: "C#(.NET), Python, C++ Interop(Marshalling), WPF, PyInstaller, Cython"
 role: "Team Member"
 company: "Mobiltech (Indonesia Project)"
 order: 1
@@ -13,7 +13,7 @@ order: 1
 - **프로젝트명**: 대규모 도시급 항공 GIS 상용 툴 개발 (Indonesia Project)
 - **기간**: 2025.07 ~ Present
 - **역할**: Team Member (C# 파이프라인 설계 및 최적화, 딥러닝 모듈 통합)
-- **기술 (Tech Stack)**: C#(.NET), Python, PyTorch, C++ Interop(Marshalling), WPF, PDAL, GDAL, SAM3, PyInstaller, Cython
+- **기술 (Tech Stack)**: C#(.NET), Python, C++ Interop(Marshalling), winui3, PyInstaller, Cython
 
 ##  주요 성과 (Key Achievements)
 - 연구팀의 Python 기반 고복잡도 로직을 상용 배포용 C# 네이티브 코드로 독자 재구현하여 서비스 가용성 및 배포 안정성 확보
