@@ -62,3 +62,5 @@ order: 2
 [ 탑뷰 이미지 ]
 ![](/assets/images/projects/hyundai_calib/topview1.png)
 ![](/assets/images/projects/hyundai_calib/topview2.png)
+[ 전체 프로그램 구조도 ]
+![](/assets/images/projects/hyundai_calib/program_strcut.png)
