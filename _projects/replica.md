@@ -31,10 +31,11 @@ order: 5
 - **해결 방안 (Action)**: Hikvision 및 MIPI/GMSL 카메라 인터페이스를 신규 구현. 특히 **LV125 프로토콜을 정밀 분석하여 DMI(Distance Measurement Instrument) 데이터를 직접 파싱**하고, 이를 전체 시스템 파이프라인에 통합.
 - **결과 (Result)**: 기존 추출 시스템에 DMI 데이터를 활용한 신규 기능을 추가하여, **'10m 단위 Local SLAM 맵 제작'** 및 **'DMI 기반 정시 상황 판단 로깅'** 기능을 실현.
 
-### 2. LiDAR 센서 인터페이스 업데이트
-- **문제 상황/목표**: 기존 LiDAR SDK의 노후화로 신규 Hesai LiDAR SDK로의 업데이트가 필요.
-- **해결 방안 (Action)**: 신규 Hesai LiDAR SDK로 업데이트하여 기존 데이터 로깅 파이프라인에 연동.
-- **결과 (Result)**: 기존 파이프라인에 큰 에러 없이 안정적으로 통합 완료.
+### 2. LiDAR 센서 인터페이스 업데이트 및 MIPI/GMSL 카메라 V4L2 연동
+- 신규 Hesai LiDAR SDK로 업데이트하여 기존 로깅 파이프라인에 연동.
+- E-con MIPI/GMSL 카메라는 별도 SDK 없이 **Linux V4L2 커널 인터페이스를 직접 구현** (Jetson Orin 전용). MIPI와 GMSL은 `/dev/videoN` 번지만 다르고 동일한 코드로 동작.
+- HIK, MIPI, GMSL 모두 동일한 `CameraModule` 인터페이스로 상위 코드 변경 없이 교체 가능.
+- 상세 구현: [V4L2로 MIPI/GMSL 카메라 직접 연결하기](/posts/2026/04/08/v4l2-mipi-gmsl-camera)
 
 ### 3. Replica Lite SW 트리거 기능 개발
 - **문제 상황/목표**: 단일 카메라·단일 LiDAR·Garmin GPS + Jetson Orin Nano로 구성된 도로 POI 데이터 취득 특화 경량 제품군(Replica Lite)에서, 별도 하드웨어 트리거 보드 없이 로깅 툴 내에서 SW적으로 트리거 신호를 생성하는 기능이 필요.
