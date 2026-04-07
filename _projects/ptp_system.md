@@ -19,21 +19,29 @@ order: 6
 
 ## 주요 성과 (Key Achievements)
 - SW PTP를 통한 **us(마이크로초) 단위** 시간 동기화 시스템 구축
-- **HW PTP 아키텍처 구축 기여 (ns 단위 동기화)**: Raspberry Pi CM4와 HW Timestamp 기능을 지원하는 MicroTik 스위치 허브를 연동. RMC와 PPS 신호를 CM4에 연결하여 GPS Master 역할을 수행하게 함으로써, 실제 센서들이 PTP로 정밀한 시간 동기화를 받을 수 있도록 중간 교두보 역할 확립에 참여
-- SC-400 보드의 가상 GPS 신호 생성 기능 구현으로 GPS 음영 구간 데이터 손실 문제 해결
-- 2025년부터 해당 동기화 제품(SC-400) **판매 진행 중**
+- **HW PTP 아키텍처 구축 기여 (ns 단위 동기화)**: Raspberry Pi CM4 + `ts2phc` / `phc2sys` / `ptp4l` 파이프라인으로 GPS 기준 시각을 CM4 내부까지 동기화한 뒤, MicroTik 스위치(BC)를 통해 차량 전체 센서에 PTP를 분배하는 시스템 초기 구축에 참여
+- **Jetson Orin(ARM) 환경에서 GPIO를 활용한 트리거 타이밍 시스템 구축**
 
 ## 상세 업무 및 기여 (Responsibilities & Contributions)
 
 ### 1. PTP 시간 동기화 시스템 구축
 - **문제 상황/목표**: 기존 시스템은 LiDAR 하드웨어에서 직접 RMC 신호를 받을 수 있는 특정 센서에서만 시간 동기화가 가능한 제약이 존재.
-- **해결 방안 (Action)**: SW PTP를 통해 초기 소프트웨어 타임스탬프 기반 PTP 시스템을 구축(us 단위 동기화). 고도화를 위해 팀원으로서 **Raspberry Pi CM4와 MicroTik 스위치 허브** 기반의 HW PTP 시스템 설계 및 교두보 환경 구축에 참여. CM4가 RMC/PPS를 받아 GPS Master로서 기능하며 이기종 센서들에게 PTP를 분배하는 세팅을 지원하고, GPS time이 분기마다 변경되는 이슈를 확인 및 수정.
-- **결과 (Result)**: 센서 종류에 제약 없이 us/ns 수준의 범용적인 시간 동기화 체계 확립.
+- **해결 방안 (Action)**: SW PTP를 통해 초기 소프트웨어 타임스탬프 기반 PTP 시스템을 구축(us 단위 동기화). 고도화를 위해 팀원으로서 **Raspberry Pi CM4 + MicroTik 스위치(BC)** 기반의 HW PTP 시스템 초기 구축에 참여.
+  - **CM4 GPS 동기화 파이프라인**: 외부 GNSS 수신기의 PPS 및 RMC 신호를 CM4에 직접 연결 → `ts2phc`로 CM4 NIC PHC(Physical Hardware Clock)를 GPS 기준 시각으로 동기화 → `phc2sys`로 CM4 시스템 클럭을 PHC에 종속 → `ptp4l`로 CM4를 **GM(Grandmaster)**으로 동작시켜 차량 내 네트워크로 PTP 배포.
+  - **MicroTik 스위치(BC)**: GM인 CM4로부터 PTP를 수신하여 자체 PHC에 동기화 후, 연결된 LiDAR·카메라·IMU 등 이기종 센서들에게 PTP를 재배포하는 **Boundary Clock** 역할 수행.
+  - GPS 리프 초(leap second) 적용으로 분기마다 GPS time이 오프셋되는 이슈를 확인 및 수정.
+- **결과 (Result)**: 센서 종류에 제약 없이 ns 수준의 범용적인 시간 동기화 체계 확립.
 
-### 2. GPS 음영 구간 대응을 위한 가상 GPS 신호 생성 (SC-400)
-- **문제 상황/목표**: 터널이나 지하 등 GPS 신호가 단절되는 구간에서 센서들의 시간 동기화가 풀리고 데이터가 유실되는 문제 해결 필요.
-- **해결 방안 (Action)**: NVIDIA Orin 환경에서 선행 구현했던 **가상 GPS 신호(PPS + NMEA) 생성 로직을 SC-400 보드용으로 이식 및 최적화**. 신호 생성의 핵심인 GPRMC 문장 파싱 및 시스템 연동 로직을 담당.
-- **결과 (Result)**: GPS 신호가 끊기더라도(Unlock) 시스템의 **Local Time을 마스터로 하여 가상의 GPS 신호(PPS + NMEA)를 생성하는 기능 구현에 참여(STM32 기반)**. 다만, GPS 복구 시 시간이 동기화되는 찰나의 시점에서는 미세한 데이터 손실이 발생할 수 있는 기술적 특성을 확인 및 관리함. 해당 모듈은 2025년부터 상용화되어 SC-400 제품으로 판매 중.
+> **BC(Boundary Clock) vs TC(Transparent Clock)**
+> - **BC**: 스위치 자체가 PTP slave가 되어 upstream GM과 동기화하고, 자신이 새로운 GM으로서 downstream 장치들에 시간을 재배포. 각 hop에서 딜레이를 완전히 보정하므로 정확도가 높음.
+> - **TC**: 스위치는 자체 클럭 없이 PTP 패킷이 통과할 때 내부 체류 시간(residence time)을 측정해 패킷에 보정값(correction field)만 추가. End-to-end GM–slave 경로를 유지하면서 스위치 지연만 보상하는 방식.
+
+### 2. Jetson Orin Nano GPIO 트리거 시스템 구축
+- **문제 상황/목표**: SC-400 전용 트리거 보드 도입 이전, Jetson Orin Nano(ARM) 환경에서 카메라·LiDAR 센서에 동기화된 트리거 신호를 직접 생성할 수 있는 시스템 필요.
+- **해결 방안 (Action)**:
+  - **GPS 시각 동기화 레이어**: Garmin GPS의 PPS 신호를 Orin Nano GPIO 핀으로 입력(`pps-gpio` 커널 드라이버)하고, NMEA(GPRMC)를 UART(`/dev/ttyTHS1`)로 수신하여 `gpsd`에 연결. `chrony`의 `refclock SHM`(NMEA) + `refclock PPS /dev/pps0`(Hardpps) 구성으로 시스템 클럭(`CLOCK_REALTIME`)을 GPS 기준으로 동기화.
+  - **GPIO 트리거 출력**: GPS 동기화된 `CLOCK_REALTIME`을 기준으로 1초를 100ms 단위로 **10분할(10Hz)** 하여 GPIO BCM 18·19번 핀에 트리거 펄스를 출력(`JetsonGPIO` 라이브러리, `m_PPS_DIV_Mode`). 카메라·LiDAR 트리거 라인에 직접 연결해 다중 센서 동기 트리거 구현.
+- **결과 (Result)**: Garmin PPS/GPRMC 기반 GPS 시각 동기화 → 10Hz GPIO 하드웨어 트리거 출력 파이프라인 구축. 이후 전용 SC-400 보드로의 전환을 위한 기술적 검증 역할 수행.
 
 ### 3. 트리거 타임 성능 평가
 - **문제 상황/목표**: 동기화 시스템의 정확도를 정량적으로 검증할 필요.
