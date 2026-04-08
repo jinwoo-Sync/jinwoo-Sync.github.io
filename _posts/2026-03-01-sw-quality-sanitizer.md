@@ -8,6 +8,17 @@ tags: [C++, Sanitizer, ASAN, TSan, UBSan, clang-tidy, ARM]
 
 ---
 
+## 도구 개요
+
+| 도구 | 어떤 문제를 해결하는가 |
+|------|----------------------|
+| **ASAN** (AddressSanitizer) | 메모리를 잘못 쓰는 문제 — 버퍼 오버플로우, 해제된 메모리 접근(UAF), `delete`/`delete[]` 불일치처럼 **메모리 경계·수명을 위반**할 때 쓴다 |
+| **TSan** (ThreadSanitizer) | 멀티스레드 환경에서 **두 스레드가 같은 변수를 동시에 읽고 쓰는** 데이터 레이스를 잡을 때 쓴다 |
+| **UBSan** (UndefinedBehaviorSanitizer) | C++ 표준이 "결과를 보장하지 않는다"고 명시한 **정의되지 않은 동작** — 포맷 스트링 타입 불일치, 메모리 정렬 위반, 정수 오버플로우 등을 잡을 때 쓴다 |
+| **clang-tidy** | 런타임 전에 소스 코드를 분석해 **코드 패턴 수준의 설계 결함** — 위험한 캐스트, API 불일치, 명명 규칙 위반 등을 빌드 단계에서 차단할 때 쓴다 |
+
+---
+
 ## 1. ASAN — `delete` vs `delete[]` 불일치
 
 > 빌드 플래그: `-fsanitize=address -fno-omit-frame-pointer`
